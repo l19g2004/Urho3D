@@ -26,10 +26,10 @@
 
 namespace Urho3D
 {
-
-class Node;
-class Scene;
-
+    
+    class Node;
+    class Scene;
+    
 }
 
 class Vehicle;
@@ -42,7 +42,7 @@ class Vehicle;
 class VehicleDemo : public Sample
 {
     URHO3D_OBJECT(VehicleDemo, Sample);
-
+    
 public:
     /// Construct.
     VehicleDemo(Context* context);
