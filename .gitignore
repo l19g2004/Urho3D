@@ -90,4 +90,5 @@ Thumbs.db
 
 # Xcode files
 *.xcodeproj/
-
+*.build
+build/
