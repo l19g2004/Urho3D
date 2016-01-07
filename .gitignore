@@ -87,3 +87,7 @@ configure*
 *.log
 *.bak
 Thumbs.db
+
+# Xcode files
+*.xcodeproj/
+
