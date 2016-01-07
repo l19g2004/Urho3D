@@ -1,0 +1,17 @@
+<scene id="1">
+	<component id="1" type="Octree"/>
+	<component id="2" type="DebugRenderer"/>
+	<component id="3" type="Light">
+		<attribute name="Light Type" value="Directional"/>
+	</component>
+	<node id="16777216">
+		<attribute name="Name" value="Scene"/>
+		<node id="16777217">
+			<attribute name="Name" value="SafetyCone"/>
+			<component id="16777216" type="StaticModel">
+				<attribute name="Model" value="Model;UserStuff/SafetyCone/SafetyCone.mdl"/>
+				<attribute name="Material" value="Material;;"/>
+			</component>
+		</node>
+	</node>
+</scene>
