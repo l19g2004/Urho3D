@@ -94,4 +94,11 @@ configure*
 *.log
 *.bak
 Thumbs.db
+<<<<<<< HEAD
 .directory
+=======
+
+# Xcode files
+*.xcodeproj/
+
+>>>>>>> ignore Xcode project files
