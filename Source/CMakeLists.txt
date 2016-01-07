@@ -122,10 +122,13 @@ add_subdirectory (Tools)
 # Samples are built on iOS platform too when enabled. Currently there is no available mechanism to package each sample apps into individual *.apk
 # for Android platform, so we deploy all samples into one apk and use a simple list view activity launcher to select the sample to run
 if (URHO3D_SAMPLES)
-    add_subdirectory (Samples)
+    #add_subdirectory (Samples)
 endif ()
 
 # Urho3D extras
 if (URHO3D_EXTRAS)
     add_subdirectory (Extras)
 endif ()
+
+# Add MyProjects
+    add_subdirectory (MyProjects)
