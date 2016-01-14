@@ -5,7 +5,7 @@
       <Option title="Urho3D-Samples" />
       <Option makefile_is_custom="1" />
       <Option compiler="gcc" />
-      <Option virtualFolders="CMake Files\;CMake Files\CMake\;CMake Files\CMake\Modules\;CMake Files\Source\;CMake Files\Source\ThirdParty\;CMake Files\Source\ThirdParty\FreeType\;CMake Files\Source\ThirdParty\JO\;CMake Files\Source\ThirdParty\LZ4\;CMake Files\Source\ThirdParty\PugiXml\;CMake Files\Source\ThirdParty\rapidjson\;CMake Files\Source\ThirdParty\SDL\;CMake Files\Source\ThirdParty\StanHull\;CMake Files\Source\ThirdParty\STB\;CMake Files\Source\ThirdParty\AngelScript\;CMake Files\Source\ThirdParty\Lua\;CMake Files\Source\ThirdParty\toluapp\;CMake Files\Source\ThirdParty\toluapp\src\;CMake Files\Source\ThirdParty\toluapp\src\lib\;CMake Files\Source\ThirdParty\toluapp\src\bin\;CMake Files\Source\ThirdParty\Civetweb\;CMake Files\Source\ThirdParty\kNet\;CMake Files\Source\ThirdParty\Detour\;CMake Files\Source\ThirdParty\DetourCrowd\;CMake Files\Source\ThirdParty\DetourTileCache\;CMake Files\Source\ThirdParty\Recast\;CMake Files\Source\ThirdParty\Box2D\;CMake Files\Source\ThirdParty\Bullet\;CMake Files\Source\ThirdParty\GLEW\;CMake Files\Source\ThirdParty\LibCpuId\;CMake Files\Source\ThirdParty\Assimp\;CMake Files\Source\Urho3D\;CMake Files\Source\Tools\;CMake Files\Source\Tools\Urho3DPlayer\;CMake Files\Source\Tools\AssetImporter\;CMake Files\Source\Tools\OgreImporter\;CMake Files\Source\Tools\PackageTool\;CMake Files\Source\Tools\RampGenerator\;CMake Files\Source\Tools\SpritePacker\;CMake Files\Source\Tools\ScriptCompiler\;CMake Files\Source\MyProjects\;CMake Files\Source\MyProjects\01_HelloWorld2\;CMake Files\Source\MyProjects\19_VehicleDemo2\;CMake Files\Docs\;" />
+      <Option virtualFolders="CMake Files\;CMake Files\CMake\;CMake Files\CMake\Modules\;CMake Files\Source\;CMake Files\Source\ThirdParty\;CMake Files\Source\ThirdParty\FreeType\;CMake Files\Source\ThirdParty\JO\;CMake Files\Source\ThirdParty\LZ4\;CMake Files\Source\ThirdParty\PugiXml\;CMake Files\Source\ThirdParty\rapidjson\;CMake Files\Source\ThirdParty\SDL\;CMake Files\Source\ThirdParty\StanHull\;CMake Files\Source\ThirdParty\STB\;CMake Files\Source\ThirdParty\AngelScript\;CMake Files\Source\ThirdParty\Lua\;CMake Files\Source\ThirdParty\toluapp\;CMake Files\Source\ThirdParty\toluapp\src\;CMake Files\Source\ThirdParty\toluapp\src\lib\;CMake Files\Source\ThirdParty\toluapp\src\bin\;CMake Files\Source\ThirdParty\Civetweb\;CMake Files\Source\ThirdParty\kNet\;CMake Files\Source\ThirdParty\Detour\;CMake Files\Source\ThirdParty\DetourCrowd\;CMake Files\Source\ThirdParty\DetourTileCache\;CMake Files\Source\ThirdParty\Recast\;CMake Files\Source\ThirdParty\Box2D\;CMake Files\Source\ThirdParty\Bullet\;CMake Files\Source\ThirdParty\GLEW\;CMake Files\Source\ThirdParty\LibCpuId\;CMake Files\Source\ThirdParty\Assimp\;CMake Files\Source\Urho3D\;CMake Files\Source\Tools\;CMake Files\Source\Tools\Urho3DPlayer\;CMake Files\Source\Tools\AssetImporter\;CMake Files\Source\Tools\OgreImporter\;CMake Files\Source\Tools\PackageTool\;CMake Files\Source\Tools\RampGenerator\;CMake Files\Source\Tools\SpritePacker\;CMake Files\Source\Tools\ScriptCompiler\;CMake Files\Source\MyProjects\;CMake Files\Source\MyProjects\19_VehicleDemo2\;CMake Files\Docs\;" />
       <Build>
       <Target title="all">
          <Option working_dir="/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects" />
@@ -15,76 +15,6 @@
             <CompileFile command="/usr/bin/make -f &quot;/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
             <Clean command="/usr/bin/make -f &quot;/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/Makefile&quot;  VERBOSE=1 clean" />
             <DistClean command="/usr/bin/make -f &quot;/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/Makefile&quot;  VERBOSE=1 clean" />
-         </MakeCommands>
-      </Target>
-      <Target title="01_HelloWorld2">
-         <Option output="/home/lukas/urho3d_workspace/Urho3D/bin/01_HelloWorld2" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/lukas/urho3d_workspace/Urho3D/bin" />
-         <Option object_output="./" />
-         <Option type="1" />
-         <Option compiler="gcc" />
-         <Compiler>
-            <Add option="-DURHO3D_FILEWATCHER" />
-            <Add option="-DURHO3D_PROFILING" />
-            <Add option="-DURHO3D_LOGGING" />
-            <Add option="-DURHO3D_THREADING" />
-            <Add option="-DGLEW_STATIC" />
-            <Add option="-DGLEW_NO_GLU" />
-            <Add option="-DURHO3D_STATIC_DEFINE" />
-            <Add option="-DURHO3D_ANGELSCRIPT" />
-            <Add option="-DURHO3D_LUA" />
-            <Add option="-DTOLUA_RELEASE" />
-            <Add option="-DURHO3D_NAVIGATION" />
-            <Add option="-DURHO3D_NETWORK" />
-            <Add option="-DURHO3D_PHYSICS" />
-            <Add option="-DURHO3D_URHO2D" />
-            <Add option="-DHAVE_STDINT_H" />
-            <Add directory="/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects" />
-            <Add directory="/home/lukas/urho3d_workspace/Urho3D/include" />
-            <Add directory="/home/lukas/urho3d_workspace/Urho3D/include/Urho3D/ThirdParty" />
-            <Add directory="/home/lukas/urho3d_workspace/Urho3D/include/Urho3D/ThirdParty/Bullet" />
-            <Add directory="/home/lukas/urho3d_workspace/Urho3D/include/Urho3D/ThirdParty/Lua" />
-         </Compiler>
-         <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/01_HelloWorld2/Makefile&quot;  VERBOSE=1 01_HelloWorld2" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/01_HelloWorld2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/01_HelloWorld2/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/01_HelloWorld2/Makefile&quot;  VERBOSE=1 clean" />
-         </MakeCommands>
-      </Target>
-      <Target title="01_HelloWorld2/fast">
-         <Option output="/home/lukas/urho3d_workspace/Urho3D/bin/01_HelloWorld2" prefix_auto="0" extension_auto="0" />
-         <Option working_dir="/home/lukas/urho3d_workspace/Urho3D/bin" />
-         <Option object_output="./" />
-         <Option type="1" />
-         <Option compiler="gcc" />
-         <Compiler>
-            <Add option="-DURHO3D_FILEWATCHER" />
-            <Add option="-DURHO3D_PROFILING" />
-            <Add option="-DURHO3D_LOGGING" />
-            <Add option="-DURHO3D_THREADING" />
-            <Add option="-DGLEW_STATIC" />
-            <Add option="-DGLEW_NO_GLU" />
-            <Add option="-DURHO3D_STATIC_DEFINE" />
-            <Add option="-DURHO3D_ANGELSCRIPT" />
-            <Add option="-DURHO3D_LUA" />
-            <Add option="-DTOLUA_RELEASE" />
-            <Add option="-DURHO3D_NAVIGATION" />
-            <Add option="-DURHO3D_NETWORK" />
-            <Add option="-DURHO3D_PHYSICS" />
-            <Add option="-DURHO3D_URHO2D" />
-            <Add option="-DHAVE_STDINT_H" />
-            <Add directory="/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects" />
-            <Add directory="/home/lukas/urho3d_workspace/Urho3D/include" />
-            <Add directory="/home/lukas/urho3d_workspace/Urho3D/include/Urho3D/ThirdParty" />
-            <Add directory="/home/lukas/urho3d_workspace/Urho3D/include/Urho3D/ThirdParty/Bullet" />
-            <Add directory="/home/lukas/urho3d_workspace/Urho3D/include/Urho3D/ThirdParty/Lua" />
-         </Compiler>
-         <MakeCommands>
-            <Build command="/usr/bin/make -f &quot;/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/01_HelloWorld2/Makefile&quot;  VERBOSE=1 01_HelloWorld2/fast" />
-            <CompileFile command="/usr/bin/make -f &quot;/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/01_HelloWorld2/Makefile&quot;  VERBOSE=1 &quot;$file&quot;" />
-            <Clean command="/usr/bin/make -f &quot;/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/01_HelloWorld2/Makefile&quot;  VERBOSE=1 clean" />
-            <DistClean command="/usr/bin/make -f &quot;/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/01_HelloWorld2/Makefile&quot;  VERBOSE=1 clean" />
          </MakeCommands>
       </Target>
       <Target title="19_VehicleDemo2">
@@ -158,13 +88,9 @@
          </MakeCommands>
       </Target>
       </Build>
-      <Unit filename="/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/01_HelloWorld2/HelloWorld.cpp">
-      </Unit>
       <Unit filename="/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/19_VehicleDemo2/Vehicle.cpp">
       </Unit>
       <Unit filename="/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/19_VehicleDemo2/VehicleDemo.cpp">
-      </Unit>
-      <Unit filename="/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/01_HelloWorld2/HelloWorld.h">
       </Unit>
       <Unit filename="/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/19_VehicleDemo2/Vehicle.h">
       </Unit>
@@ -339,12 +265,6 @@
       </Unit>
       <Unit filename="/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/CMakeLists.txt">
           <Option virtualFolder="CMake Files\Source\MyProjects\" />
-      </Unit>
-      <Unit filename="/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/01_HelloWorld2/CMakeLists.txt">
-          <Option virtualFolder="CMake Files\Source\MyProjects\01_HelloWorld2\" />
-      </Unit>
-      <Unit filename="/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/01_HelloWorld2/CMakeLists.txt">
-          <Option virtualFolder="CMake Files\Source\MyProjects\01_HelloWorld2\" />
       </Unit>
       <Unit filename="/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/19_VehicleDemo2/CMakeLists.txt">
           <Option virtualFolder="CMake Files\Source\MyProjects\19_VehicleDemo2\" />
