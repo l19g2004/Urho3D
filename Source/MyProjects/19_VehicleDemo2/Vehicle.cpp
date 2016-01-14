@@ -119,10 +119,14 @@ void Vehicle::Init()
     //Vector3 v3BoxExtents = Vector3::ONE;//Vector3(1.5f, 1.0f, 3.0f);
     hullColShape->SetBox( Vector3(1.0f, 1.0f, 2.0f) );
     
-    hullObject->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/Chassis_001.mdl"));
+    hullObject->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/Chassis_001test.mdl"));
     //hullObject->SetMaterial(cache->GetResource<Material>("Materials/Stone.xml"));
     hullObject->SetCastShadows(true);
-    
+
+    int numBones = hullObject->GetModel()->GetSkeleton().GetNumBones();
+    SDL_Log( "numBones: %d\n", numBones);
+
+
     //float connectionHeight = -0.4f;//1.2f;
     float connectionHeight = 0.0f;
     bool isFrontWheel=true;
