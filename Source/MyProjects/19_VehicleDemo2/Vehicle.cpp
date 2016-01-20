@@ -251,7 +251,7 @@ void Vehicle::Init()
             
             StaticModel *pWheel = wheelNode->CreateComponent<StaticModel>();
             if(i == 0)
-                pWheel->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/test/wheel_000.mdl"));
+                pWheel->SetModel(cache->GetResource<Model>("MyProjects/SimpeCar/wheel.mdl"));
             else
                 pWheel->SetModel(cache->GetResource<Model>("MyProjects/SimpeCar/wheel.mdl"));
             
@@ -346,10 +346,22 @@ void Vehicle::PostUpdate(float )
         m_vehicle->updateWheelTransform( i, true );
         
         btTransform transform = m_vehicle->getWheelTransformWS( i );
-        
 
         Vector3 v3Origin = ToVector3( transform.getOrigin() );
         Quaternion qRot = ToQuaternion( transform.getRotation() );
+        
+        
+/*
+        ResourceCache* cache = GetSubsystem<ResourceCache>();
+        Node* axesNode = GetScene()->CreateChild("Axes");
+        StaticModel* axesModel = axesNode->CreateComponent<StaticModel>();
+        axesModel->SetModel(cache->GetResource<Model>("MyProjects/Helpers/Axes.mdl"));
+        axesModel->SetMaterial(cache->GetResource<Material>("MyProjects/Helpers/blue.xml"));
+        axesNode->SetPosition(v3Origin);
+        axesNode->SetScale(3.0f);
+*/
+       
+
         
         Node *pWheel = m_vpNodeWheel[ i ];
 
@@ -361,6 +373,25 @@ void Vehicle::PostUpdate(float )
             pWheel->SetPosition(Vector3(-0.704,-0.310,-1.189));
             
 
+            SDL_Log("##################### \n");
+            
+            //SDL_Log("transform: %f, %f, %f \n", v3Origin.x_, v3Origin.y_, v3Origin.z_);
+            
+            //v3Origin = Vector3(-0.704,-0.310,-1.189);
+            
+            //SDL_Log("transform: %f, %f, %f \n", v3Origin.x_, v3Origin.y_, v3Origin.z_);
+            
+            
+            
+            SDL_Log("qRot: %f, %f, %f \n",  qRot.PitchAngle(), qRot.YawAngle(), qRot.RollAngle());
+            
+            qRot.FromEulerAngles(10.0, 15.0, 20.0);
+            
+            SDL_Log("qRot: %f, %f, %f \n",  qRot.PitchAngle(), qRot.YawAngle(), qRot.RollAngle());
+            
+            
+            
+            
 
             pWheel->SetRotation(qRot);
             //pWheel->SetRotation(Quaternion(0.0f, 90.0f, 0.0f)*qRot);
