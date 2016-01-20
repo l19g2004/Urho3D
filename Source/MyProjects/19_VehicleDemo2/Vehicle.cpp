@@ -39,13 +39,13 @@ Vehicle::Vehicle(Context* context)
     maxEngineForce = 5000.f;    //this should be engine/velocity dependent
     maxBreakingForce = 500.f;
     
-    gVehicleSteering = 0.0f;
+    //gVehicleSteering = 0.0f;
     steeringIncrement = 0.05f;    //amount of applied angular force key:A/D
     steeringClamp = 0.2f;   	 //Don't increase the angle
-    wheelRadius = 0.42f;
-    wheelWidth = 0.22f;
-    wheelFriction = 1000;//BT_LARGE_FLOAT;
-    suspensionStiffness = 50.0f;//20.f;
+    wheelRadius = 0.25f;
+    wheelWidth = 0.2f;
+    wheelFriction = 100;//BT_LARGE_FLOAT;
+    suspensionStiffness = 40.0f;//20.f;
     suspensionDamping = 2.3f;//2.3f;
     suspensionCompression = 4.4f;//4.4f;
     rollInfluence = 0.01f;//1.0f;
@@ -145,19 +145,19 @@ void Vehicle::Init()
     StaticModel* object0 = objectNode0->CreateComponent<StaticModel>();
     object0->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/test/wheel_000.mdl"));
     object0->SetCastShadows(true);
-
     
     btVector3 connectionPointCS0(((object0->GetBoundingBox()).Center()).x_, ((object0->GetBoundingBox()).Center()).y_, ((object0->GetBoundingBox()).Center()).z_);
-    
+    wheelRadius = object0->GetBoundingBox().HalfSize().y_;
     m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-    
     
     
     
     SDL_Log( "objectNode0: %f, %f, %f \n", ((object0->GetBoundingBox()).Center()).x_, ((object0->GetBoundingBox()).Center()).y_, ((object0->GetBoundingBox()).Center()).z_);
     
+    //SDL_Log( "objectNode0.HalfSize: %s \n", object0->GetBoundingBox().HalfSize().ToString().CString() );
+
     
-    
+
     // front left
     /////////////
     Node* objectNode1 = GetScene()->CreateChild("wheel_002");
@@ -165,7 +165,8 @@ void Vehicle::Init()
     object1->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/test/wheel_001.mdl"));
     object1->SetCastShadows(true);
     
-    connectionPointCS0 = btVector3(((object1->GetBoundingBox()).Center()).x_, ((object1->GetBoundingBox()).Center()).y_, ((object1->GetBoundingBox()).Center()).z_);
+    connectionPointCS0 = btVector3(((object1->GetBoundingBox()).Center()).x_, ((object1->GetBoundingBox()).Center()).y_+0.3, ((object1->GetBoundingBox()).Center()).z_);
+    wheelRadius = object1->GetBoundingBox().HalfSize().y_;
     m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning, isFrontWheel);
     
     
@@ -181,6 +182,7 @@ void Vehicle::Init()
     object2->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/test/wheel_002.mdl"));
     object2->SetCastShadows(true);
     connectionPointCS0 = btVector3(((object2->GetBoundingBox()).Center()).x_, ((object2->GetBoundingBox()).Center()).y_, ((object2->GetBoundingBox()).Center()).z_);
+    wheelRadius = object2->GetBoundingBox().HalfSize().y_;
     m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
     
     
@@ -193,6 +195,7 @@ void Vehicle::Init()
     object3->SetCastShadows(true);
     
     connectionPointCS0 = btVector3(((object3->GetBoundingBox()).Center()).x_, ((object3->GetBoundingBox()).Center()).y_, ((object3->GetBoundingBox()).Center()).z_);
+    wheelRadius = object3->GetBoundingBox().HalfSize().y_;
     m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
     
     
@@ -253,11 +256,11 @@ void Vehicle::Init()
                 pWheel->SetModel(cache->GetResource<Model>("MyProjects/SimpeCar/wheel.mdl"));
             
             if(i == 0) {
-                wheelNode->SetPosition( Vector3(50,50,50) );
-                wheelNode->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
+                //wheelNode->SetPosition( Vector3(50,50,50) );
+                //wheelNode->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
             }else {
                 //wheelNode->SetPosition( v3Origin );
-                wheelNode->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
+                //wheelNode->SetRotation(Quaternion(0.0f, 0.0f, 0.0f));
             }
             
             m_vpNodeWheel.Push( wheelNode );
@@ -344,26 +347,29 @@ void Vehicle::PostUpdate(float )
         
         btTransform transform = m_vehicle->getWheelTransformWS( i );
         
-        
+
         Vector3 v3Origin = ToVector3( transform.getOrigin() );
         Quaternion qRot = ToQuaternion( transform.getRotation() );
         
         Node *pWheel = m_vpNodeWheel[ i ];
-        pWheel->SetPosition( v3Origin );
+
         
         btWheelInfo whInfo = m_vehicle->getWheelInfo( i );
         Vector3 v3PosLS = ToVector3( whInfo.m_chassisConnectionPointCS );
  
         if(i == 0) {
-            //pWheel->SetPosition( v3Origin + Vector3(-1.182, 0.704, 0.31));
+            pWheel->SetPosition(Vector3(-0.704,-0.310,-1.189));
             
-            pWheel->SetRotation(qRot*Quaternion(-180.0f, 0.0f, -90.0f));
+
+
+            pWheel->SetRotation(qRot);
+            //pWheel->SetRotation(Quaternion(0.0f, 90.0f, 0.0f)*qRot);
             //SDL_Log( "v3Origin: \"%s\" \n", (v3Origin.ToString()).CString());
-            SDL_Log( "qRot: \"%s\" \n", qRot.ToString().CString());
+            //SDL_Log( "qRot: \"%s\" \n", pWheel->GetRotation().ToString().CString());
         } else{
-        
-        Quaternion qRotator = ( v3PosLS.x_ >= 0.0 ? Quaternion(0.0f, 0.0f, -90.0f) : Quaternion(0.0f, 0.0f, 90.0f) );
-        pWheel->SetRotation( qRot * qRotator );
+            pWheel->SetPosition( v3Origin );
+            Quaternion qRotator = ( v3PosLS.x_ >= 0.0 ? Quaternion(0.0f, 0.0f, -90.0f) : Quaternion(0.0f, 0.0f, 90.0f) );
+            pWheel->SetRotation( qRot * qRotator );
         
           
         }
