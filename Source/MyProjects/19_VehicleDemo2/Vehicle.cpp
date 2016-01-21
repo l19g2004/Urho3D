@@ -42,8 +42,8 @@ Vehicle::Vehicle(Context* context)
     //gVehicleSteering = 0.0f;
     steeringIncrement = 0.05f;    //amount of applied angular force key:A/D
     steeringClamp = 0.2f;   	 //Don't increase the angle
-    wheelRadius = 0.25f;
-    wheelWidth = 0.2f;
+    wheelRadius = 0.55f;
+    wheelWidth = 0.4f;
     wheelFriction = 100;//BT_LARGE_FLOAT;
     suspensionStiffness = 40.0f;//20.f;
     suspensionDamping = 2.3f;//2.3f;
@@ -150,13 +150,28 @@ void Vehicle::Init()
     wheelRadius = object0->GetBoundingBox().HalfSize().y_;
     m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
     
+    m_vpNodeWheel.Push( objectNode0 );
     
-    
-    SDL_Log( "objectNode0: %f, %f, %f \n", ((object0->GetBoundingBox()).Center()).x_, ((object0->GetBoundingBox()).Center()).y_, ((object0->GetBoundingBox()).Center()).z_);
-    
+    //SDL_Log( "objectNode0: %f, %f, %f \n", ((object0->GetBoundingBox()).Center()).x_, ((object0->GetBoundingBox()).Center()).y_, ((object0->GetBoundingBox()).Center()).z_);
     //SDL_Log( "objectNode0.HalfSize: %s \n", object0->GetBoundingBox().HalfSize().ToString().CString() );
 
-    
+    SDL_Log("##################### \n");
+    SDL_Log("objectNode0WorldP: %f, %f, %f \n", objectNode0->GetWorldPosition().x_, objectNode0->GetWorldPosition().y_, objectNode0->GetWorldPosition().z_);
+    SDL_Log("objectNode0P: %f, %f, %f \n", objectNode0->GetPosition().x_, objectNode0->GetPosition().y_, objectNode0->GetPosition().z_);
+
+    SDL_Log( "object0BoundP: %f, %f, %f \n", ((object0->GetBoundingBox()).Center()).x_, ((object0->GetBoundingBox()).Center()).y_, ((object0->GetBoundingBox()).Center()).z_);
+
+    objectNode0->SetPosition(objectNode0->GetPosition() - (object0->GetBoundingBox()).Center());
+
+    //SDL_Log("transform: %f, %f, %f \n", v3Origin.x_, v3Origin.y_, v3Origin.z_);
+    //v3Origin = v3Origin - Vector3(0.704, 0.379, 1.19);
+    //SDL_Log("transform: %f, %f, %f \n", v3Origin.x_, v3Origin.y_, v3Origin.z_);
+
+
+
+
+
+
 
     // front left
     /////////////
@@ -169,7 +184,7 @@ void Vehicle::Init()
     wheelRadius = object1->GetBoundingBox().HalfSize().y_;
     m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning, isFrontWheel);
     
-    
+     m_vpNodeWheel.Push( objectNode1 );
     
     
     isFrontWheel = false;
@@ -185,7 +200,7 @@ void Vehicle::Init()
     wheelRadius = object2->GetBoundingBox().HalfSize().y_;
     m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
     
-    
+     m_vpNodeWheel.Push( objectNode2 );
     
     // back left
     /////////////
@@ -199,7 +214,7 @@ void Vehicle::Init()
     m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
     
     
-    
+    m_vpNodeWheel.Push( objectNode3 );
     
     
     //connectionPointCS0 = btVector3(CUBE_HALF_EXTENTS-(0.3f*wheelWidth),connectionHeight,-2*CUBE_HALF_EXTENTS+wheelRadius);
@@ -230,7 +245,7 @@ void Vehicle::Init()
             
             btTransform transform = m_vehicle->getWheelTransformWS( i );
             
-            
+            /*
             
             //Vector3 v3Origin = ToVector3( transform.getOrigin() );
             //Quaternion qRot = ToQuaternion( transform.getRotation() );
@@ -268,6 +283,7 @@ void Vehicle::Init()
             //pWheel->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/test/wheel_004.mdl"));
             pWheel->SetMaterial(cache->GetResource<Material>("MyProjects/SimpeCar/TireTextureMaterial.xml"));
             pWheel->SetCastShadows(true);
+            */
         }
     }
 }
@@ -362,48 +378,52 @@ void Vehicle::PostUpdate(float )
 */
        
 
-        
         Node *pWheel = m_vpNodeWheel[ i ];
 
         
         btWheelInfo whInfo = m_vehicle->getWheelInfo( i );
         Vector3 v3PosLS = ToVector3( whInfo.m_chassisConnectionPointCS );
  
+        /*
         if(i == 0) {
-            pWheel->SetPosition(Vector3(-0.704,-0.310,-1.189));
-            
+            //pWheel->SetPosition(Vector3(-0.704,-0.310,-1.189));
+
+
 
             SDL_Log("##################### \n");
-            
-            //SDL_Log("transform: %f, %f, %f \n", v3Origin.x_, v3Origin.y_, v3Origin.z_);
-            
-            //v3Origin = Vector3(-0.704,-0.310,-1.189);
-            
-            //SDL_Log("transform: %f, %f, %f \n", v3Origin.x_, v3Origin.y_, v3Origin.z_);
-            
-            
-            
+
+            SDL_Log("wheelnode: %f, %f, %f \n", pWheel->GetWorldPosition().x_, pWheel->GetWorldPosition().y_, pWheel->GetWorldPosition().z_);
+
+            SDL_Log("transform: %f, %f, %f \n", v3Origin.x_, v3Origin.y_, v3Origin.z_);
+
+            v3Origin = v3Origin - Vector3(0.704, 0.379, 1.19);
+
+            SDL_Log("transform: %f, %f, %f \n", v3Origin.x_, v3Origin.y_, v3Origin.z_);
+
+
             SDL_Log("qRot: %f, %f, %f \n",  qRot.PitchAngle(), qRot.YawAngle(), qRot.RollAngle());
-            
-            qRot.FromEulerAngles(10.0, 15.0, 20.0);
-            
-            SDL_Log("qRot: %f, %f, %f \n",  qRot.PitchAngle(), qRot.YawAngle(), qRot.RollAngle());
-            
-            
-            
-            
+
+            qRot.FromEulerAngles(qRot.PitchAngle(), qRot.YawAngle() + 180.0, qRot.RollAngle());
+
+            SDL_Log("qRot: %f, %f, %f \n",  qRot.PitchAngle(), qRot.YawAngle() , qRot.RollAngle());
+
+
+            //pWheel->SetPosition( Vector3(v3Origin.x_, v3Origin.y_, v3Origin.z_ ) );
+            pWheel->SetPosition( v3Origin );
+
 
             pWheel->SetRotation(qRot);
             //pWheel->SetRotation(Quaternion(0.0f, 90.0f, 0.0f)*qRot);
             //SDL_Log( "v3Origin: \"%s\" \n", (v3Origin.ToString()).CString());
             //SDL_Log( "qRot: \"%s\" \n", pWheel->GetRotation().ToString().CString());
         } else{
+        */
             pWheel->SetPosition( v3Origin );
             Quaternion qRotator = ( v3PosLS.x_ >= 0.0 ? Quaternion(0.0f, 0.0f, -90.0f) : Quaternion(0.0f, 0.0f, 90.0f) );
             pWheel->SetRotation( qRot * qRotator );
         
           
-        }
+        //}
         
     }
     
