@@ -24,6 +24,7 @@
 #include <Urho3D/Core/ProcessUtils.h>
 #include <Urho3D/Engine/Engine.h>
 #include <Urho3D/Graphics/Camera.h>
+#include <Urho3D/Graphics/DebugRenderer.h>
 #include <Urho3D/Graphics/Light.h>
 #include <Urho3D/Graphics/Material.h>
 #include <Urho3D/Graphics/Model.h>
@@ -44,9 +45,12 @@
 #include <Urho3D/UI/Font.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UI.h>
+#include <SDL/SDL_log.h>
 
 #include "Vehicle.h"
 #include "VehicleDemo.h"
+
+
 
 #include <Urho3D/DebugNew.h>
 
@@ -55,7 +59,7 @@ const float CAMERA_DISTANCE = 10.0f;
 URHO3D_DEFINE_APPLICATION_MAIN(VehicleDemo)
 
 VehicleDemo::VehicleDemo(Context* context) :
-Sample(context)
+Sample(context), drawDebug_(true)
 {
     // Register factory and attributes for the Vehicle component so it can be created via CreateComponent, and loaded / saved
     Vehicle::RegisterObject(context);
@@ -88,6 +92,7 @@ void VehicleDemo::CreateScene()
     // Create scene subsystem components
     scene_->CreateComponent<Octree>();
     scene_->CreateComponent<PhysicsWorld>();
+    scene_->CreateComponent<DebugRenderer>();
     
     // Create camera and define viewport. We will be doing load / save, so it's convenient to create the camera outside the scene,
     // so that it won't be destroyed and recreated, and we don't have to redefine the viewport on load
@@ -112,8 +117,9 @@ void VehicleDemo::CreateScene()
     light->SetLightType(LIGHT_DIRECTIONAL);
     light->SetCastShadows(true);
     light->SetShadowBias(BiasParameters(0.00025f, 0.5f));
-    light->SetShadowCascade(CascadeParameters(10.0f, 50.0f, 200.0f, 0.0f, 0.8f));
+    light->SetShadowCascade(CascadeParameters(20.0f, 50.0f, 200.0f, 0.0f, 0.8f));
     light->SetSpecularIntensity(0.5f);
+    
     
     // Create heightmap terrain with collision
     Node* terrainNode = scene_->CreateChild("Terrain");
@@ -137,14 +143,16 @@ void VehicleDemo::CreateScene()
     // Create skybox. The Skybox component is used like StaticModel, but it will be always located at the camera, giving the
     // illusion of the box planes being far away. Use just the ordinary Box model and a suitable material, whose shader will
     // generate the necessary 3D texture coordinates for cube mapping
+  
     Node* skyNode = scene_->CreateChild("Sky");
     skyNode->SetScale(500.0f); // The scale actually does not matter
     Skybox* skybox = skyNode->CreateComponent<Skybox>();
     skybox->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
     skybox->SetMaterial(cache->GetResource<Material>("Materials/Skybox.xml"));
-    
+   
     
     // Create 1000 mushrooms in the terrain. Always face outward along the terrain normal
+   /*
     const unsigned NUM_MUSHROOMS = 0;
     for (unsigned i = 0; i < NUM_MUSHROOMS; ++i)
     {
@@ -171,12 +179,14 @@ void VehicleDemo::CreateScene()
         //shape->SetTriangleMesh(object->GetModel(), 0);
         shape->SetConvexHull(object->GetModel(), 0);
     }
+    */
 }
 
 void VehicleDemo::CreateVehicle()
 {
     Node* vehicleNode = scene_->CreateChild("Vehicle");
     vehicleNode->SetPosition(Vector3(0.0f, 5.0f, 0.0f));
+    
     
     // Create the vehicle logic component
     vehicle_ = vehicleNode->CreateComponent<Vehicle>();
@@ -204,6 +214,22 @@ void VehicleDemo::CreateInstructions()
     instructionText->SetHorizontalAlignment(HA_CENTER);
     instructionText->SetVerticalAlignment(VA_CENTER);
     instructionText->SetPosition(0, ui->GetRoot()->GetHeight() / 4);
+    
+    
+    
+    // insert speed
+    Text* speedText = ui->GetRoot()->CreateChild<Text>();
+    speedText->SetText("x km/h");
+    speedText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
+    // The text has multiple rows. Center them in relation to each other
+    speedText->SetTextAlignment(HA_CENTER);
+    
+    // Position the text relative to the screen center
+    speedText->SetHorizontalAlignment(HA_CENTER);
+    speedText->SetVerticalAlignment(VA_CENTER);
+    speedText->SetPosition(ui->GetRoot()->GetWidth()/8, ui->GetRoot()->GetHeight() / 8);
+    
+    
 }
 
 void VehicleDemo::SubscribeToEvents()
@@ -213,6 +239,11 @@ void VehicleDemo::SubscribeToEvents()
     
     // Subscribe to PostUpdate event for updating the camera position after physics simulation
     SubscribeToEvent(E_POSTUPDATE, URHO3D_HANDLER(VehicleDemo, HandlePostUpdate));
+    
+    // Subscribe HandlePostRenderUpdate() function for processing the post-render update event, during which we request
+    // debug geometry
+    SubscribeToEvent(E_POSTRENDERUPDATE, URHO3D_HANDLER(VehicleDemo, HandlePostRenderUpdate));
+    
     
     // Unsubscribe the SceneUpdate event from base class as the camera node is being controlled in HandlePostUpdate() in this sample
     UnsubscribeFromEvent(E_SCENEUPDATE);
@@ -314,4 +345,37 @@ void VehicleDemo::HandlePostUpdate(StringHash eventType, VariantMap& eventData)
     
     cameraNode_->SetPosition(cameraTargetPos);
     cameraNode_->SetRotation(dir);
+      
+    
+}
+
+void VehicleDemo::HandlePostRenderUpdate(StringHash eventType, VariantMap& eventData)
+{
+    // If draw debug mode is enabled, draw navigation mesh debug geometry
+    if (drawDebug_){
+        scene_->GetComponent<PhysicsWorld>()->DrawDebugGeometry(true);
+    }
+
+    
+
+    
+  /*
+    if (currentPath_.Size())
+    {
+        // Visualize the current calculated path
+        DebugRenderer* debug = scene_->GetComponent<DebugRenderer>();
+        debug->AddBoundingBox(BoundingBox(endPos_ - Vector3(0.1f, 0.1f, 0.1f), endPos_ + Vector3(0.1f, 0.1f, 0.1f)),
+                              Color(1.0f, 1.0f, 1.0f));
+        
+        // Draw the path with a small upward bias so that it does not clip into the surfaces
+        Vector3 bias(0.0f, 0.05f, 0.0f);
+        debug->AddLine(jackNode_->GetPosition() + bias, currentPath_[0] + bias, Color(1.0f, 1.0f, 1.0f));
+        
+        if (currentPath_.Size() > 1)
+        {
+            for (unsigned i = 0; i < currentPath_.Size() - 1; ++i)
+                debug->AddLine(currentPath_[i] + bias, currentPath_[i + 1] + bias, Color(1.0f, 1.0f, 1.0f));
+        }
+    }
+   */
 }

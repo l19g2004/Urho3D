@@ -16,6 +16,8 @@
 
 #include "Vehicle.h"
 
+
+
 #include <SDL/SDL_log.h>
 #include <Bullet/BulletDynamics/Vehicle/btRaycastVehicle.h>
 #include <Bullet/BulletDynamics/Dynamics/btDynamicsWorld.h>
@@ -105,8 +107,7 @@ void Vehicle::Init()
     int rightIndex = 0;
     int upIndex = 1;
     int forwardIndex = 2;
-    Scene* scene = GetScene();
-    PhysicsWorld *pPhysWorld = scene->GetComponent<PhysicsWorld>();
+    PhysicsWorld *pPhysWorld = GetScene()->GetComponent<PhysicsWorld>();
     btDynamicsWorld *pbtDynWorld = (btDynamicsWorld*)pPhysWorld->GetWorld();
     
     m_vehicleRayCaster = new btDefaultVehicleRaycaster( pbtDynWorld );
@@ -114,29 +115,29 @@ void Vehicle::Init()
     pbtDynWorld->addVehicle( m_vehicle );
     
     m_vehicle->setCoordinateSystem( rightIndex, upIndex, forwardIndex );
-    
-    node_->SetScale( Vector3(1.0f, 1.0f, 1.0f) );
+
     //Vector3 v3BoxExtents = Vector3::ONE;//Vector3(1.5f, 1.0f, 3.0f);
     hullObject->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/test/Chassis_001.mdl"));
-    hullColShape->SetBox((hullObject->GetBoundingBox()).Size() -  Vector3(1.f, 1.f, 1.f) );
-
+    node_->SetScale( Vector3(1.0f, 1.0f, 1.0f) );
+    hullColShape->SetBox((hullObject->GetBoundingBox()).Size() - Vector3(1.0, 0.0, 0.0));
+    //hullColShape->SetTriangleMesh(cache->GetResource<Model>("Models/Box.mdl"));
+    hullColShape->SetSize(Vector3(1.0f, 1.0f, 3.0f));
     
+    
+    hullColShape->SetPosition((hullObject->GetBoundingBox()).Center());
     //hullObject->SetMaterial(cache->GetResource<Material>("Materials/Stone.xml"));
     hullObject->SetCastShadows(true);
 
-
-
-
     
-  
     
 
+    
 
     //float connectionHeight = -0.4f;//1.2f;
     float connectionHeight = 0.0f;
     bool isFrontWheel=true;
     btVector3 wheelDirectionCS0(0,-1,0);
-    btVector3 wheelAxleCS(-1,0,0);
+    btVector3 wheelAxleCS(1,0,0);
     
     
     // front right
@@ -149,8 +150,8 @@ void Vehicle::Init()
     //btVector3 connectionPointCS0(((model_wheel_temp0->GetBoundingBox()).Center()).x_, ((model_wheel_temp0->GetBoundingBox()).Center()).y_, ((model_wheel_temp0->GetBoundingBox()).Center()).z_);
     //wheelRadius = model_wheel_temp0->GetBoundingBox().HalfSize().y_;
     //m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-    btVector3 connectionPointCS0((model_wheel_temp0->GetBoundingBox()).Center().x_,((model_wheel_temp0->GetBoundingBox()).Center()).y_+0.3,((model_wheel_temp0->GetBoundingBox()).Center()).z_);
-    m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
+    btVector3 connectionPointCS0((model_wheel_temp0->GetBoundingBox()).Center().x_,((model_wheel_temp0->GetBoundingBox()).Center()).y_-0.3,((model_wheel_temp0->GetBoundingBox()).Center()).z_);
+    m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,btVector3(-1,0,0),suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
 
 
     Node* node_wheel_0 = GetScene()->CreateChild("node_wheel_0");
@@ -178,8 +179,6 @@ void Vehicle::Init()
 
 
 
-
-
     // front left
     /////////////
     Node* node_wheel_temp1 = GetScene()->CreateChild("node_wheel_temp1");
@@ -190,8 +189,8 @@ void Vehicle::Init()
     //btVector3 connectionPointCS0(((model_wheel_temp0->GetBoundingBox()).Center()).x_, ((model_wheel_temp0->GetBoundingBox()).Center()).y_, ((model_wheel_temp0->GetBoundingBox()).Center()).z_);
     //wheelRadius = model_wheel_temp0->GetBoundingBox().HalfSize().y_;
     //m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-    connectionPointCS0 = btVector3((model_wheel_temp1->GetBoundingBox()).Center().x_,((model_wheel_temp1->GetBoundingBox()).Center()).y_+0.3,((model_wheel_temp1->GetBoundingBox()).Center()).z_);
-    m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
+    connectionPointCS0 = btVector3((model_wheel_temp1->GetBoundingBox()).Center().x_,((model_wheel_temp1->GetBoundingBox()).Center()).y_-0.3,((model_wheel_temp1->GetBoundingBox()).Center()).z_);
+    m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,btVector3(-1,0,0),suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
 
 
     Node* node_wheel_1 = GetScene()->CreateChild("node_wheel_1");
@@ -217,8 +216,8 @@ void Vehicle::Init()
     //btVector3 connectionPointCS0(((model_wheel_temp0->GetBoundingBox()).Center()).x_, ((model_wheel_temp0->GetBoundingBox()).Center()).y_, ((model_wheel_temp0->GetBoundingBox()).Center()).z_);
     //wheelRadius = model_wheel_temp0->GetBoundingBox().HalfSize().y_;
     //m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-    connectionPointCS0 = btVector3((model_wheel_temp2->GetBoundingBox()).Center().x_,((model_wheel_temp2->GetBoundingBox()).Center()).y_+0.3,((model_wheel_temp2->GetBoundingBox()).Center()).z_);
-    m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
+    connectionPointCS0 = btVector3((model_wheel_temp2->GetBoundingBox()).Center().x_,((model_wheel_temp2->GetBoundingBox()).Center()).y_-0.3,((model_wheel_temp2->GetBoundingBox()).Center()).z_);
+    m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,btVector3(-1,0,0),suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
 
 
     Node* node_wheel_2 = GetScene()->CreateChild("node_wheel_2");
@@ -243,8 +242,8 @@ void Vehicle::Init()
     //btVector3 connectionPointCS0(((model_wheel_temp0->GetBoundingBox()).Center()).x_, ((model_wheel_temp0->GetBoundingBox()).Center()).y_, ((model_wheel_temp0->GetBoundingBox()).Center()).z_);
     //wheelRadius = model_wheel_temp0->GetBoundingBox().HalfSize().y_;
     //m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-    connectionPointCS0 = btVector3((model_wheel_temp3->GetBoundingBox()).Center().x_,((model_wheel_temp3->GetBoundingBox()).Center()).y_+0.3,((model_wheel_temp3->GetBoundingBox()).Center()).z_);
-    m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,wheelAxleCS,suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
+    connectionPointCS0 = btVector3((model_wheel_temp3->GetBoundingBox()).Center().x_,((model_wheel_temp3->GetBoundingBox()).Center()).y_-0.3,((model_wheel_temp3->GetBoundingBox()).Center()).z_);
+    m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,btVector3(-1,0,0),suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
 
 
     Node* node_wheel_3 = GetScene()->CreateChild("node_wheel_2");
@@ -252,7 +251,6 @@ void Vehicle::Init()
     node_wheel_3->SetRotation(Quaternion(0.0f, 0.0f, -90.0f));
     node_wheel_temp3->SetParent(node_wheel_3);
     m_vpNodeWheel.Push( node_wheel_3 );
-
 
 
 
@@ -386,6 +384,7 @@ void Vehicle::FixedUpdate(float timeStep)
     wheelIndex = 1; // links
     m_vehicle->setSteeringValue(gVehicleSteering,wheelIndex);
     
+    
 }
 
 //=============================================================================
@@ -411,6 +410,7 @@ void Vehicle::PostUpdate(float )
         pWheel->SetRotation( qRot * qRotator );
         
     }
-    
+
+    SDL_Log( "Speed: %f \n", (m_vehicle->getCurrentSpeedKmHour()));
 }
 
