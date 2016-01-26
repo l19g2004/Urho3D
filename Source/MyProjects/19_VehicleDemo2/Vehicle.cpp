@@ -47,11 +47,11 @@ Vehicle::Vehicle(Context* context)
     wheelRadius = 0.32f;
     wheelWidth = 0.22f;
     wheelFriction = 1000;//BT_LARGE_FLOAT;
+    rollInfluence = 0.01f;//1.0f;
     suspensionStiffness = 40.0f;//20.f;
     suspensionDamping = 2.3f;//2.3f;
     suspensionCompression = 4.4f;//4.4f;
-    rollInfluence = 0.01f;//1.0f;
-    suspensionRestLength = 0.6f;//0.6
+    suspensionRestLength = 0.6f;//0.6       // federung
     
     m_vehicleRayCaster = NULL;
     m_vehicle = NULL;
@@ -103,6 +103,7 @@ void Vehicle::Init()
     hullBody_->SetLinearDamping(0.2f); // Some air resistance
     hullBody_->SetAngularDamping(0.5f);
     hullBody_->SetCollisionLayer(1);
+
     
     int rightIndex = 0;
     int upIndex = 1;
@@ -115,7 +116,7 @@ void Vehicle::Init()
     pbtDynWorld->addVehicle( m_vehicle );
     
     m_vehicle->setCoordinateSystem( rightIndex, upIndex, forwardIndex );
-
+    
     //Vector3 v3BoxExtents = Vector3::ONE;//Vector3(1.5f, 1.0f, 3.0f);
     hullObject->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/test/Chassis_001.mdl"));
     node_->SetScale( Vector3(1.0f, 1.0f, 1.0f) );
@@ -128,7 +129,6 @@ void Vehicle::Init()
     //hullObject->SetMaterial(cache->GetResource<Material>("Materials/Stone.xml"));
     hullObject->SetCastShadows(true);
 
-    
     
 
     
@@ -329,6 +329,10 @@ void Vehicle::FixedUpdate(float timeStep)
     
     //SDL_Log( "gVehicleSteering: %f\n", gVehicleSteering);
     //SDL_Log( "controls_.buttons_: %d\n", controls_.buttons_);
+    
+    // set the RigidBody active if its sleeping
+    if((m_vehicle->getRigidBody())->getActivationState() > 1)
+        (m_vehicle->getRigidBody())->setActivationState(ACTIVE_TAG);
     
     
     // Read controls
