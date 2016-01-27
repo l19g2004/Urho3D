@@ -119,6 +119,7 @@ void Vehicle::Init()
     
     //Vector3 v3BoxExtents = Vector3::ONE;//Vector3(1.5f, 1.0f, 3.0f);
     hullObject->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/test/Chassis_001.mdl"));
+
     node_->SetScale( Vector3(1.0f, 1.0f, 1.0f) );
     hullColShape->SetBox((hullObject->GetBoundingBox()).Size() - Vector3(1.0, 0.0, 0.0));
     //hullColShape->SetTriangleMesh(cache->GetResource<Model>("Models/Box.mdl"));
@@ -145,6 +146,7 @@ void Vehicle::Init()
     Node* node_wheel_temp0 = GetScene()->CreateChild("node_wheel_temp0");
     StaticModel* model_wheel_temp0 = node_wheel_temp0->CreateComponent<StaticModel>();
     model_wheel_temp0->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/test/wheel_000.mdl"));
+    model_wheel_temp0->ApplyMaterialList("MyProjects/MiniCooper/test/wheel_000.txt");
     model_wheel_temp0->SetCastShadows(true);
 
     //btVector3 connectionPointCS0(((model_wheel_temp0->GetBoundingBox()).Center()).x_, ((model_wheel_temp0->GetBoundingBox()).Center()).y_, ((model_wheel_temp0->GetBoundingBox()).Center()).z_);
