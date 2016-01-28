@@ -121,9 +121,10 @@ void Vehicle::Init()
     hullObject->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/test/Chassis_001.mdl"));
 
     node_->SetScale( Vector3(1.0f, 1.0f, 1.0f) );
-    hullColShape->SetBox((hullObject->GetBoundingBox()).Size() - Vector3(1.0, 0.0, 0.0));
+    hullColShape->SetConvexHull(cache->GetResource<Model>("MyProjects/MiniCooper/test/collision.mdl"));
+    //hullColShape->SetBox((hullObject->GetBoundingBox()).Size() - Vector3(1.0, 0.0, 0.0));
     //hullColShape->SetTriangleMesh(cache->GetResource<Model>("Models/Box.mdl"));
-    hullColShape->SetSize(Vector3(1.0f, 1.0f, 3.0f));
+    //hullColShape->SetSize(Vector3(1.0f, 1.0f, 3.0f));
     
     
     hullColShape->SetPosition((hullObject->GetBoundingBox()).Center());
