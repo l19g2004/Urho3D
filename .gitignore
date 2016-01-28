@@ -43,7 +43,7 @@ generated/
 /*.kdev?
 
 # Qt Creator project settings
-/CMakeLists.txt.user
+CMakeLists.txt.user
 
 # JetBrains IDE project settings
 /.idea/
@@ -92,3 +92,6 @@ Thumbs.db
 *.xcodeproj/
 *.build
 build/
+
+#blender temp files
+*.blend1
