@@ -1,0 +1,6 @@
+<material>
+	<technique name="MyProjects/MiniCooper/test/Diff.xml"/>
+	<texture name="MyProjects/MiniCooper/test/breakdiscAndMini.png" unit="diffuse"/>
+	<parameter name="MatDiffColor" value="0.705882 0.705882 0.705882 1"/>
+	<parameter name="MatSpecColor" value="0 0 0 2"/>
+</material>

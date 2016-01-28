@@ -1,0 +1,5 @@
+MyProjects/MiniCooper/test/breakdiscAndMini_Material.xml
+MyProjects/MiniCooper/test/darkgray.xml
+MyProjects/MiniCooper/test/wheelbandframe_Material.xml
+MyProjects/MiniCooper/test/wheelband_Material.xml
+MyProjects/MiniCooper/test/Chrome.xml

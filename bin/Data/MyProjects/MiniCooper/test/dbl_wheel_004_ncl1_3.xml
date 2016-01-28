@@ -1,0 +1,5 @@
+<material>
+	<technique name="MyProjects/MiniCooper/test/NoTexture.xml"/>
+	<parameter name="MatDiffColor" value="0.752941 0.752941 0.752941 1"/>
+	<parameter name="MatSpecColor" value="0 0 0 2"/>
+</material>
