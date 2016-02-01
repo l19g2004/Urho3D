@@ -58,11 +58,19 @@ Urho2DSprite::Urho2DSprite(Context* context) :
 {
 }
 
+void Urho2DSprite::Setup()
+{
+    // Modify engine startup parameters
+    Sample::Setup();
+    engineParameters_["Sound"] = true;
+    engineParameters_["FullScreen"]  = false;
+}
+
 void Urho2DSprite::Start()
 {
     // Execute base class startup
     Sample::Start();
-
+    
     // Create the scene content
     CreateScene();
 
@@ -74,6 +82,7 @@ void Urho2DSprite::Start()
 
     // Hook up to the frame update events
     SubscribeToEvents();
+    
 }
 
 void Urho2DSprite::CreateScene()
@@ -100,6 +109,20 @@ void Urho2DSprite::CreateScene()
 
     float halfWidth = graphics->GetWidth() * 0.5f * PIXEL_SIZE;
     float halfHeight = graphics->GetHeight() * 0.5f * PIXEL_SIZE;
+    
+    
+    GetSubsystem<Audio>()->SetMasterGain(SOUND_MUSIC, 1.0);
+    Sound* music = cache->GetResource<Sound>("/Users/Lukas/Documents/Software/urho3d_workspace/Urho3D/Source/MyProjects/24_Urho2DSprite/dq.wav");
+    // Set the song to loop
+    music->SetLooped(true);
+    
+    // Create a scene node and a sound source for the music
+    musicNode = scene_->CreateChild("Music");
+    SoundSource* musicSource = musicNode->CreateComponent<SoundSource>();
+    // Set the sound type to music so that master volume control works correctly
+    musicSource->SetSoundType(SOUND_MUSIC);
+    musicSource->SetGain(1.0);
+    musicSource->Play(music);
     
 
     
@@ -139,16 +162,12 @@ void Urho2DSprite::CreateInstructions()
     UI* ui = GetSubsystem<UI>();
 
     
-    Sound* music = cache->GetResource<Sound>("/Users/Lukas/Documents/Software/urho3d_workspace/Urho3D/Source/MyProjects/24_Urho2DSprite/dq.wav");
-    // Set the song to loop
-    music->SetLooped(true);
-    // Create a scene node and a sound source for the music
-    musicNode = scene_->CreateChild("Music");
-    SoundSource* musicSource = musicNode->CreateComponent<SoundSource>();
-    // Set the sound type to music so that master volume control works correctly
-    musicSource->SetSoundType(SOUND_MUSIC);
-    musicSource->Play(music);
-    
+    // Create text and slider below it
+    timeText = ui->GetRoot()->CreateChild<Text>("timeText");
+    timeText->SetPosition(ui->GetRoot()->GetWidth()*0.02, ui->GetRoot()->GetHeight()*0.02);
+    timeText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 12);
+    timeText->SetText("Time: 0:00");
+    timeText->SetColor(Color(0.0f, 0.0f, 0.0f));
     
     // Construct new Text object, set string to display and font to use
     //Text* instructionText = ui->GetRoot()->CreateChild<Text>();
@@ -226,13 +245,33 @@ void Urho2DSprite::HandleUpdate(StringHash eventType, VariantMap& eventData)
     // Take the frame time step, which is stored as a float
     float timeStep = eventData[P_TIMESTEP].GetFloat();
 
-    // Move the camera, scale movement with time step
-    //MoveCamera(timeStep);
 
+    
+    // Show current time position of the song
+    
     SoundSource* musicSource = (musicNode->GetComponent<SoundSource>());
+    
+    String newtimeText = String("Time: ");
+    newtimeText.Append(String((int)((musicSource->GetTimePosition())/60)));
+    newtimeText.Append(":");
+    if(musicSource->GetTimePosition() < 10.0)
+        newtimeText.Append("0");
+    newtimeText.Append(String((int)((musicSource->GetTimePosition()))));
+    
+    timeText->SetText(newtimeText);
+    
 
-    SDL_Log( "#### Pos: %s \n", (musicSource->GetPlayPosition()) );
-    SDL_Log( "#### PosAtt: %d \n", (musicSource->GetPositionAttr()) );
+    
+
+    
+
+
+   // SDL_Log( "#### Pos: %s \n", (musicSource->GetPlayPosition()) );
+    SDL_Log( "#### PosAtt: %f \n", (musicSource->GetTimePosition()) );
+   
+
+  
+    
     
     
     Graphics* graphics = GetSubsystem<Graphics>();

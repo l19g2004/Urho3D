@@ -70,6 +70,7 @@ protected:
     }
 
 private:
+    void Setup();
     /// Construct the scene content.
     void CreateScene();
     /// Construct an instruction text to the UI.    
@@ -86,4 +87,5 @@ private:
     /// Sprite nodes.
     Vector<SharedPtr<Node> > spriteNodes_;
     SharedPtr<Node> musicNode;
+    Text* timeText;
 };
