@@ -46,10 +46,15 @@
 
 #include <SDL/SDL_log.h>
 
-// Number of static sprites to draw
-static const unsigned NUM_SPRITES = 10;
+#include <vector>
+#include "import.h"
+
+
+
 static const StringHash VAR_MOVESPEED("MoveSpeed");
-static const StringHash VAR_ROTATESPEED("RotateSpeed");
+//static const StringHash VAR_ROTATESPEED("RotateSpeed");
+static const StringHash VAR_TIMESTAMP("Timestamp");
+static const StringHash VAR_ACTIVE("Active");
 
 URHO3D_DEFINE_APPLICATION_MAIN(Urho2DSprite)
 
@@ -62,7 +67,7 @@ void Urho2DSprite::Setup()
 {
     // Modify engine startup parameters
     Sample::Setup();
-    engineParameters_["Sound"] = true;
+    engineParameters_["Sound"] = false;
     engineParameters_["FullScreen"]  = false;
 }
 
@@ -103,7 +108,7 @@ void Urho2DSprite::CreateScene()
 
     ResourceCache* cache = GetSubsystem<ResourceCache>();
     // Get sprite
-    Sprite2D* sprite = cache->GetResource<Sprite2D>("/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/24_Urho2DSprite/arrow2.png");
+    Sprite2D* sprite = cache->GetResource<Sprite2D>("/Users/Lukas/Documents/Software/urho3d_workspace/Urho3D/Source/MyProjects/24_Urho2DSprite/arrow2.png");
     if (!sprite)
         return;
 
@@ -112,10 +117,10 @@ void Urho2DSprite::CreateScene()
     
     
     GetSubsystem<Audio>()->SetMasterGain(SOUND_MUSIC, 1.0);
-    Sound* music = cache->GetResource<Sound>("/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/24_Urho2DSprite/dq.wav");
+    Sound* music = cache->GetResource<Sound>("/Users/Lukas/Documents/Software/urho3d_workspace/Urho3D/Source/MyProjects/24_Urho2DSprite/dq.wav");
     // Set the song to loop
     music->SetLooped(true);
-    
+
     // Create a scene node and a sound source for the music
     musicNode = scene_->CreateChild("Music");
     SoundSource* musicSource = musicNode->CreateComponent<SoundSource>();
@@ -126,11 +131,59 @@ void Urho2DSprite::CreateScene()
     
 
     
-    for (unsigned i = 0; i < NUM_SPRITES; ++i)
-    {
-        SharedPtr<Node> spriteNode(scene_->CreateChild("StaticSprite2D"));
-        spriteNode->SetPosition(Vector3(Random(-halfWidth, halfWidth), Random(-halfHeight, halfHeight), 0.0f));
+    std::vector<Arrow> arrows = readFile("/Users/Lukas/Documents/Software/urho3d_workspace/Urho3D/Source/MyProjects/24_Urho2DSprite/arrow_sequence4.txt");
 
+    SDL_Log( "#### arrow_sequence3: %d \n", arrows.size() );
+    SDL_Log( "#### PIXEL_SIZE: %f \n", PIXEL_SIZE);
+    SDL_Log( "#### graphics->GetWidth(): %f \n", graphics->GetWidth() );
+    SDL_Log( "#### graphics->GetHeight(): %f \n", graphics->GetHeight() );
+    SDL_Log( "#### halfWidth: %f \n", halfWidth );
+    SDL_Log( "#### halfHeight: %f \n", halfHeight );
+    
+    
+
+    
+    for (unsigned i = 0; i < arrows.size(); ++i)
+    {
+        SharedPtr<Node> spriteNode(scene_->CreateChild("Arrow"));
+        spriteNode->SetPosition(Vector3(0.0f, halfHeight, 0.0f));
+        
+        
+        
+        // Set move speed
+        spriteNode->SetVar(VAR_MOVESPEED, Vector3(0.0f,-1.0f, 0.0f));
+        spriteNode->SetVar(VAR_TIMESTAMP, arrows.at(i).getTimestamp());
+        spriteNode->SetVar(VAR_ACTIVE, false);
+        
+        // set arrow position
+        switch (arrows.at(i).getPosition()) {
+            case 0:
+                 spriteNode->SetPosition(Vector3(-(halfWidth*0.75), halfHeight+0.0, 0.0f));
+                break;
+            case 1:
+                 spriteNode->SetPosition(Vector3(-(halfWidth*0.25), halfHeight+0.0, 0.0f));
+                break;
+            case 2:
+                 spriteNode->SetPosition(Vector3((halfWidth*0.25), halfHeight+0.0, 0.0f));
+                break;
+            case 3:
+                 spriteNode->SetPosition(Vector3((halfWidth*0.75), halfHeight+0.0, 0.0f));
+                break;
+            default:
+                break;
+        }
+        // set arrow scale
+        spriteNode->SetScale(1.5);
+ 
+        
+    
+        
+        // set arrow rotation
+        spriteNode->SetRotation(Quaternion(0.0,0.0,arrows.at(i).getDegree()+180.0));
+        
+        
+        
+        // set the background transparent
         StaticSprite2D* staticSprite = spriteNode->CreateComponent<StaticSprite2D>();
         // Set random color
         //staticSprite->SetColor(Color(Random(1.0f), Random(1.0f), Random(1.0f), 1.0f));
@@ -139,10 +192,9 @@ void Urho2DSprite::CreateScene()
         // Set sprite
         staticSprite->SetSprite(sprite);
 
-        // Set move speed
-        spriteNode->SetVar(VAR_MOVESPEED, Vector3(0.0f,-1.0f, 0.0f));
         
-        spriteNode->SetRotation(Quaternion(0.0,0.0,90.0));
+        
+        
         
         // Set rotate speed
         //spriteNode->SetVar(VAR_ROTATESPEED, Random(-90.0f, 90.0f));
@@ -244,8 +296,7 @@ void Urho2DSprite::HandleUpdate(StringHash eventType, VariantMap& eventData)
 
     // Take the frame time step, which is stored as a float
     float timeStep = eventData[P_TIMESTEP].GetFloat();
-
-
+    SDL_Log( "#### timeStep: %f \n", timeStep);
     
     // Show current time position of the song
     
@@ -265,8 +316,7 @@ void Urho2DSprite::HandleUpdate(StringHash eventType, VariantMap& eventData)
     
 
 
-   // SDL_Log( "#### Pos: %s \n", (musicSource->GetPlayPosition()) );
-    SDL_Log( "#### PosAtt: %f \n", (musicSource->GetTimePosition()) );
+    SDL_Log( "#### SongPos: %f \n", (musicSource->GetTimePosition()) );
    
 
   
@@ -284,6 +334,31 @@ void Urho2DSprite::HandleUpdate(StringHash eventType, VariantMap& eventData)
         Vector3 position = node->GetPosition();
         Vector3 moveSpeed = node->GetVar(VAR_MOVESPEED).GetVector3();
         Vector3 newPosition = position + moveSpeed * timeStep;
+        double timedelay  = 0.0;
+        if(moveSpeed.y_ != 0.0)
+            timedelay = ((double)(halfHeight*2)/(double)moveSpeed.y_);
+            
+        if(i == 0)
+         SDL_Log( "#### v: %f \n",  timedelay);
+        
+
+        
+        // move arrow when timestamp is reached
+        if(( (musicSource->GetTimePosition() - timedelay)*0.9 ) > node->GetVar(VAR_TIMESTAMP).GetDouble()){
+            node->SetVar(VAR_ACTIVE, true);
+        }
+        
+        
+        // stop arrows under the bottom window border
+        if(newPosition.y_ < -halfHeight ){
+            node->SetVar(VAR_ACTIVE, false);
+        }
+        if(node->GetVar(VAR_ACTIVE).GetBool()) {
+            node->SetPosition(newPosition);
+        }
+
+        
+/*
         if (newPosition.x_ < -halfWidth || newPosition.x_ > halfWidth)
         {
             newPosition.x_ = position.x_;
@@ -296,10 +371,10 @@ void Urho2DSprite::HandleUpdate(StringHash eventType, VariantMap& eventData)
             moveSpeed.y_ = -moveSpeed.y_;
             node->SetVar(VAR_MOVESPEED, moveSpeed);
         }
+*/
+        
 
-        node->SetPosition(newPosition);
-
-        float rotateSpeed = node->GetVar(VAR_ROTATESPEED).GetFloat();
-        node->Roll(rotateSpeed * timeStep);
+       // float rotateSpeed = node->GetVar(VAR_ROTATESPEED).GetFloat();
+       // node->Roll(rotateSpeed * timeStep);
     }
 }
