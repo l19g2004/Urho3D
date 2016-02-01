@@ -103,7 +103,7 @@ void Urho2DSprite::CreateScene()
 
     ResourceCache* cache = GetSubsystem<ResourceCache>();
     // Get sprite
-    Sprite2D* sprite = cache->GetResource<Sprite2D>("/Users/Lukas/Documents/Software/urho3d_workspace/Urho3D/Source/MyProjects/24_Urho2DSprite/arrow2.png");
+    Sprite2D* sprite = cache->GetResource<Sprite2D>("/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/24_Urho2DSprite/arrow2.png");
     if (!sprite)
         return;
 
@@ -112,7 +112,7 @@ void Urho2DSprite::CreateScene()
     
     
     GetSubsystem<Audio>()->SetMasterGain(SOUND_MUSIC, 1.0);
-    Sound* music = cache->GetResource<Sound>("/Users/Lukas/Documents/Software/urho3d_workspace/Urho3D/Source/MyProjects/24_Urho2DSprite/dq.wav");
+    Sound* music = cache->GetResource<Sound>("/home/lukas/urho3d_workspace/Urho3D/Source/MyProjects/24_Urho2DSprite/dq.wav");
     // Set the song to loop
     music->SetLooped(true);
     
