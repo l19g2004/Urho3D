@@ -256,8 +256,7 @@ void Urho2DSprite::HandleUpdate(StringHash eventType, VariantMap& eventData)
     newtimeText.Append(":");
     if(musicSource->GetTimePosition() < 10.0)
         newtimeText.Append("0");
-    newtimeText.Append(String((int)((musicSource->GetTimePosition()))));
-    
+    newtimeText.Append(String((int)((musicSource->GetTimePosition()))%60));
     timeText->SetText(newtimeText);
     
 
