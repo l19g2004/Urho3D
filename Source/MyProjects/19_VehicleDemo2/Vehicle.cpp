@@ -99,7 +99,7 @@ void Vehicle::Init()
     hullBody_ = node_->CreateComponent<RigidBody>();
     CollisionShape* hullColShape = node_->CreateComponent<CollisionShape>();
     
-    hullBody_->SetMass(800.0f);
+    hullBody_->SetMass(1200.0f);
     hullBody_->SetLinearDamping(0.2f); // Some air resistance
     hullBody_->SetAngularDamping(0.5f);
     hullBody_->SetCollisionLayer(1);
@@ -119,16 +119,21 @@ void Vehicle::Init()
     
     //Vector3 v3BoxExtents = Vector3::ONE;//Vector3(1.5f, 1.0f, 3.0f);
     hullObject->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/test/Chassis_001.mdl"));
-
     node_->SetScale( Vector3(1.0f, 1.0f, 1.0f) );
+  
+    
     hullColShape->SetConvexHull(cache->GetResource<Model>("MyProjects/MiniCooper/test/collision.mdl"));
-    //hullColShape->SetBox((hullObject->GetBoundingBox()).Size() - Vector3(1.0, 0.0, 0.0));
+    //hullColShape->SetConvexHull(cache->GetResource<Model>("Models/Box.mdl"));
+    //hullColShape->SetBox((hullObject->GetBoundingBox()).Size());
     //hullColShape->SetTriangleMesh(cache->GetResource<Model>("Models/Box.mdl"));
     //hullColShape->SetSize(Vector3(1.0f, 1.0f, 3.0f));
     
     
-    hullColShape->SetPosition((hullObject->GetBoundingBox()).Center());
-    //hullObject->SetMaterial(cache->GetResource<Material>("Materials/Stone.xml"));
+    //hullColShape->SetPosition((hullObject->GetBoundingBox()).Center() - Vector3(0.0f, 0.0f, 0.0f) );
+    //hullColShape->SetPosition( Vector3(0.0f, +0.2f, 0.0f) );
+    
+   
+    
     hullObject->SetCastShadows(true);
 
     
@@ -136,10 +141,12 @@ void Vehicle::Init()
     
 
     //float connectionHeight = -0.4f;//1.2f;
-    float connectionHeight = 0.0f;
+    //float connectionHeight = 0.0f;
     bool isFrontWheel=true;
     btVector3 wheelDirectionCS0(0,-1,0);
     btVector3 wheelAxleCS(1,0,0);
+    
+    double wheelOffset = 0.5;
     
     
     // front right
@@ -153,7 +160,7 @@ void Vehicle::Init()
     //btVector3 connectionPointCS0(((model_wheel_temp0->GetBoundingBox()).Center()).x_, ((model_wheel_temp0->GetBoundingBox()).Center()).y_, ((model_wheel_temp0->GetBoundingBox()).Center()).z_);
     //wheelRadius = model_wheel_temp0->GetBoundingBox().HalfSize().y_;
     //m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-    btVector3 connectionPointCS0((model_wheel_temp0->GetBoundingBox()).Center().x_,((model_wheel_temp0->GetBoundingBox()).Center()).y_-0.3,((model_wheel_temp0->GetBoundingBox()).Center()).z_);
+    btVector3 connectionPointCS0((model_wheel_temp0->GetBoundingBox()).Center().x_,((model_wheel_temp0->GetBoundingBox()).Center()).y_ + wheelOffset,((model_wheel_temp0->GetBoundingBox()).Center()).z_);
     m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,btVector3(-1,0,0),suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
 
 
@@ -192,7 +199,7 @@ void Vehicle::Init()
     //btVector3 connectionPointCS0(((model_wheel_temp0->GetBoundingBox()).Center()).x_, ((model_wheel_temp0->GetBoundingBox()).Center()).y_, ((model_wheel_temp0->GetBoundingBox()).Center()).z_);
     //wheelRadius = model_wheel_temp0->GetBoundingBox().HalfSize().y_;
     //m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-    connectionPointCS0 = btVector3((model_wheel_temp1->GetBoundingBox()).Center().x_,((model_wheel_temp1->GetBoundingBox()).Center()).y_-0.3,((model_wheel_temp1->GetBoundingBox()).Center()).z_);
+    connectionPointCS0 = btVector3((model_wheel_temp1->GetBoundingBox()).Center().x_,((model_wheel_temp1->GetBoundingBox()).Center()).y_ + wheelOffset,((model_wheel_temp1->GetBoundingBox()).Center()).z_);
     m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,btVector3(-1,0,0),suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
 
 
@@ -219,7 +226,7 @@ void Vehicle::Init()
     //btVector3 connectionPointCS0(((model_wheel_temp0->GetBoundingBox()).Center()).x_, ((model_wheel_temp0->GetBoundingBox()).Center()).y_, ((model_wheel_temp0->GetBoundingBox()).Center()).z_);
     //wheelRadius = model_wheel_temp0->GetBoundingBox().HalfSize().y_;
     //m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-    connectionPointCS0 = btVector3((model_wheel_temp2->GetBoundingBox()).Center().x_,((model_wheel_temp2->GetBoundingBox()).Center()).y_-0.3,((model_wheel_temp2->GetBoundingBox()).Center()).z_);
+    connectionPointCS0 = btVector3((model_wheel_temp2->GetBoundingBox()).Center().x_,((model_wheel_temp2->GetBoundingBox()).Center()).y_ + wheelOffset,((model_wheel_temp2->GetBoundingBox()).Center()).z_);
     m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,btVector3(-1,0,0),suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
 
 
@@ -245,7 +252,7 @@ void Vehicle::Init()
     //btVector3 connectionPointCS0(((model_wheel_temp0->GetBoundingBox()).Center()).x_, ((model_wheel_temp0->GetBoundingBox()).Center()).y_, ((model_wheel_temp0->GetBoundingBox()).Center()).z_);
     //wheelRadius = model_wheel_temp0->GetBoundingBox().HalfSize().y_;
     //m_vehicle->addWheel(connectionPointCS0, wheelDirectionCS0, wheelAxleCS, suspensionRestLength, wheelRadius, m_tuning, isFrontWheel);
-    connectionPointCS0 = btVector3((model_wheel_temp3->GetBoundingBox()).Center().x_,((model_wheel_temp3->GetBoundingBox()).Center()).y_-0.3,((model_wheel_temp3->GetBoundingBox()).Center()).z_);
+    connectionPointCS0 = btVector3((model_wheel_temp3->GetBoundingBox()).Center().x_,((model_wheel_temp3->GetBoundingBox()).Center()).y_ + wheelOffset,((model_wheel_temp3->GetBoundingBox()).Center()).z_);
     m_vehicle->addWheel(connectionPointCS0,wheelDirectionCS0,btVector3(-1,0,0),suspensionRestLength,wheelRadius,m_tuning,isFrontWheel);
 
 
@@ -418,6 +425,6 @@ void Vehicle::PostUpdate(float )
         
     }
 
-    SDL_Log( "Speed: %f \n", (m_vehicle->getCurrentSpeedKmHour()));
+    //SDL_Log( "Speed: %f \n", (m_vehicle->getCurrentSpeedKmHour()));
 }
 

@@ -50,7 +50,8 @@
 #include "Vehicle.h"
 #include "VehicleDemo.h"
 
-
+#include "ProcSky.h"
+#include "Urho3D/IO/Log.h"
 
 #include <Urho3D/DebugNew.h>
 
@@ -63,6 +64,7 @@ Sample(context), drawDebug_(true)
 {
     // Register factory and attributes for the Vehicle component so it can be created via CreateComponent, and loaded / saved
     Vehicle::RegisterObject(context);
+    ProcSky::RegisterObject(context);
 }
 
 void VehicleDemo::Start()
@@ -121,6 +123,9 @@ void VehicleDemo::CreateScene()
     light->SetSpecularIntensity(0.5f);
     
     
+    
+    
+    
     // Create heightmap terrain with collision
     Node* terrainNode = scene_->CreateChild("Terrain");
     terrainNode->SetPosition(Vector3::ZERO);
@@ -143,13 +148,71 @@ void VehicleDemo::CreateScene()
     // Create skybox. The Skybox component is used like StaticModel, but it will be always located at the camera, giving the
     // illusion of the box planes being far away. Use just the ordinary Box model and a suitable material, whose shader will
     // generate the necessary 3D texture coordinates for cube mapping
-  
+  /*
     Node* skyNode = scene_->CreateChild("Sky");
     skyNode->SetScale(500.0f); // The scale actually does not matter
     Skybox* skybox = skyNode->CreateComponent<Skybox>();
     skybox->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
     skybox->SetMaterial(cache->GetResource<Material>("Materials/Skybox.xml"));
-   
+   */
+    
+    
+    Node* skyNode = scene_->CreateChild("ProcSkyNode");
+    skyNode->SetEnabled(true);
+    skyNode->SetName("ProcSkyNode");
+    skyNode->SetPosition(Urho3D::Vector3(0.0, 0.0, 0.0));
+    skyNode->SetRotation(Urho3D::Quaternion(1, 0, 0, 0));
+    skyNode->SetScale(Urho3D::Vector3(100.0, 100.0, 100.0));
+    
+    ProcSky* procSky = skyNode->CreateComponent<ProcSky>();
+    procSky->SetEnabled(true);
+
+    
+    /*
+    <node id="1">
+    <attribute name="Is Enabled" value="true" />
+    <attribute name="Name" value="ProcSky" />
+    <attribute name="Position" value="0 0 0" />
+    <attribute name="Rotation" value="1 0 0 0" />
+    <attribute name="Scale" value="100 100 100" />
+    <attribute name="Variables" />
+    <component type="ProcSky" id="1" />
+    <node id="2">
+    <attribute name="Is Enabled" value="true" />
+    <attribute name="Name" value="ProcSkyLight" />
+    <attribute name="Position" value="0 0 0" />
+    <attribute name="Rotation" value="0.707107 0 -0.707107 0" />
+    <attribute name="Scale" value="1 1 1" />
+    <attribute name="Variables" />
+    <component type="Light" id="2">
+    <attribute name="Light Type" value="Directional" />
+    <attribute name="Color" value="0.753 0.749 0.678 1" />
+    <attribute name="Specular Intensity" value="0" />
+    <attribute name="Can Be Occluded" value="false" />
+    <attribute name="Cast Shadows" value="true" />
+    <attribute name="CSM Splits" value="2 10 100 500" />
+    <attribute name="View Size Quantize" value="1" />
+    <attribute name="View Size Minimum" value="5" />
+    <attribute name="Depth Constant Bias" value="1e-005" />
+    <attribute name="Depth Slope Bias" value="0.001" />
+    </component>
+    </node>
+    </node>
+    */
+    
+    
+    if (skyNode) {
+        //ProcSky* procSky(skyNode->GetComponent<ProcSky>());
+        if (procSky) {
+            // Can set other parameters here; e.g., SetUpdateMode(), SetUpdateInterval(), SetRenderSize()
+            procSky->Initialize();
+            SDL_Log("ProcSky Initialized.");
+        } else {
+            SDL_Log("ProcSky node missing ProcSky component.");
+        }
+    } else {
+        SDL_Log("ProcSky node not found in scene.");
+    }
     
     // Create 1000 mushrooms in the terrain. Always face outward along the terrain normal
    /*
