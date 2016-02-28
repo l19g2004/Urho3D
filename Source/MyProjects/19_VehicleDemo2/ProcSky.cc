@@ -51,7 +51,6 @@
 #include <Urho3D/Resource/XMLFile.h>
 #endif
 #include <Urho3D/IO/Log.h>
-#include <SDL/SDL_log.h>
 #include <Urho3D/Scene/Scene.h>
 
 #if defined(PROCSKY_UI)
@@ -106,7 +105,7 @@ void ProcSky::OnNodeSet(Node* node) {
 }
 
 bool ProcSky::Initialize() {
-  SDL_Log("ProcSky::Initialize()");
+  URHO3D_LOGINFO("ProcSky::Initialize()");
   ResourceCache* cache(GetSubsystem<ResourceCache>());
   Renderer* renderer(GetSubsystem<Renderer>());
   rPath_ = renderer->GetViewport(0)->GetRenderPath();
@@ -127,7 +126,7 @@ bool ProcSky::Initialize() {
       lightNode_ = children[0];
     }
     if (!lightNode_) {
-      SDL_Log("ProcSky::Initialize: Creating node 'ProcSkyLight' with directional light.");
+      URHO3D_LOGINFO("ProcSky::Initialize: Creating node 'ProcSkyLight' with directional light.");
       lightNode_ = node_->CreateChild("ProcSkyLight");
       Light* light(lightNode_->CreateComponent<Light>());
       light->SetLightType(LIGHT_DIRECTIONAL);
@@ -141,11 +140,16 @@ bool ProcSky::Initialize() {
   skybox_ = node_->CreateComponent<Skybox>();
   Model* model(cache->GetResource<Model>("Models/Box.mdl"));
   skybox_->SetModel(model);
+
   SharedPtr<Material> skyboxMat(new Material(context_));
   skyboxMat->SetTechnique(0, cache->GetResource<Technique>("Techniques/DiffSkybox.xml"));
   skyboxMat->SetCullMode(CULL_NONE);
   skybox_->SetMaterial(skyboxMat);
+
+ // skybox_->SetMaterial(cache->GetResource<Material>("Materials/Stone.xml"));
   SetRenderSize(renderSize_);
+  
+    
 
   // Shove some of the shader parameters into a VariantMap.
   VariantMap atmoParams;
@@ -276,7 +280,7 @@ bool ProcSky::SetRenderSize(unsigned size) {
     renderSize_ = size;
     return true;
   } else {
-    //SDL_Log("ProcSky::SetSize (" + String(size) + ") ignored; requires size >= 1.");
+    URHO3D_LOGINFO("ProcSky::SetSize (" + String(size) + ") ignored; requires size >= 1.");
   }
   return false;
 }
@@ -412,7 +416,7 @@ void ProcSky::HandleSliderChanged(StringHash eventType, VariantMap& eventData) {
 void ProcSky::HandleKeyDown(StringHash eventType, VariantMap& eventData) {
   if (GetSubsystem<UI>()->GetFocusElement()) { return; }
   int key(eventData[KeyDown::P_KEY].GetInt());
-  int qual(eventData[KeyDown::P_QUALIFIERS].GetInt());
+  //int qual(eventData[KeyDown::P_QUALIFIERS].GetInt());
 
   if (key == KEY_U) {
     updateAuto_ = !updateAuto_;
@@ -462,14 +466,14 @@ void ProcSky::HandleKeyDown(StringHash eventType, VariantMap& eventData) {
 #if defined(PROCSKY_TEXTURE_DUMPING)
 
 void ProcSky::DumpTexCubeImages(TextureCube* texCube, const String& filePathPrefix) {
-  LOGINFO("Save TextureCube: " + filePathPrefix + "[0-5].png");
+  URHO3D_LOGINFO("Save TextureCube: " + filePathPrefix + "[0-5].png");
   for (unsigned j = 0; j < MAX_CUBEMAP_FACES; ++j) {
     Texture2D* faceTex(static_cast<Texture2D*>(texCube->GetRenderSurface((CubeMapFace)j)->GetParentTexture()));
     SharedPtr<Image> faceImage(new Image(context_));
     faceImage->SetSize(faceTex->GetWidth(), faceTex->GetHeight(), faceTex->GetComponents());
     String filePath(filePathPrefix + String(j) + ".png");
     if (!texCube->GetData((CubeMapFace)j, 0, faceImage->GetData())) {
-      LOGERROR("...failed GetData() for face " + filePath);
+      URHO3D_LOGINFO("...failed GetData() for face " + filePath);
     } else {
       faceImage->SavePNG(filePath);
     }
@@ -477,12 +481,12 @@ void ProcSky::DumpTexCubeImages(TextureCube* texCube, const String& filePathPref
 }
 
 void ProcSky::DumpTexture(Texture2D* texture, const String& filePath) {
-  LOGINFO("Save texture: " + filePath);
+  URHO3D_LOGINFO("Save texture: " + filePath);
   SharedPtr<Image> image(new Image(context_));
   image->SetSize(texture->GetWidth(), texture->GetHeight(), texture->GetComponents());
 
   if (!texture->GetData(0, image->GetData())) {
-    LOGERROR("...failed GetData().");
+    URHO3D_LOGERROR("...failed GetData().");
   } else {
     image->SavePNG(filePath);
   }
