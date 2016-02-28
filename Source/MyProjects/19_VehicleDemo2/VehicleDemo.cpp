@@ -45,7 +45,7 @@
 #include <Urho3D/UI/Font.h>
 #include <Urho3D/UI/Text.h>
 #include <Urho3D/UI/UI.h>
-#include <SDL/SDL_log.h>
+#include <Urho3D/IO/Log.h>
 
 #include "Vehicle.h"
 #include "VehicleDemo.h"
@@ -58,6 +58,7 @@
 const float CAMERA_DISTANCE = 10.0f;
 
 URHO3D_DEFINE_APPLICATION_MAIN(VehicleDemo)
+
 
 VehicleDemo::VehicleDemo(Context* context) :
 Sample(context), drawDebug_(true)
@@ -102,16 +103,17 @@ void VehicleDemo::CreateScene()
     Camera* camera = cameraNode_->CreateComponent<Camera>();
     camera->SetFarClip(500.0f);
     GetSubsystem<Renderer>()->SetViewport(0, new Viewport(context_, scene_, camera));
-    
+
     // Create static scene content. First create a zone for ambient lighting and fog control
     Node* zoneNode = scene_->CreateChild("Zone");
     Zone* zone = zoneNode->CreateComponent<Zone>();
-    zone->SetAmbientColor(Color(0.15f, 0.15f, 0.15f));
-    zone->SetFogColor(Color(0.5f, 0.5f, 0.7f));
+    //zone->SetAmbientColor(Color(0.15f, 0.15f, 0.15f));
+    zone->SetFogColor(Color(0.2f, 0.2f, 0.3f));
     zone->SetFogStart(300.0f);
     zone->SetFogEnd(500.0f);
     zone->SetBoundingBox(BoundingBox(-2000.0f, 2000.0f));
-    
+
+ /*
     // Create a directional light with cascaded shadow mapping
     Node* lightNode = scene_->CreateChild("DirectionalLight");
     lightNode->SetDirection(Vector3(0.3f, -0.5f, 0.425f));
@@ -121,7 +123,7 @@ void VehicleDemo::CreateScene()
     light->SetShadowBias(BiasParameters(0.00025f, 0.5f));
     light->SetShadowCascade(CascadeParameters(20.0f, 50.0f, 200.0f, 0.0f, 0.8f));
     light->SetSpecularIntensity(0.5f);
-    
+*/
     
     
     
@@ -148,13 +150,14 @@ void VehicleDemo::CreateScene()
     // Create skybox. The Skybox component is used like StaticModel, but it will be always located at the camera, giving the
     // illusion of the box planes being far away. Use just the ordinary Box model and a suitable material, whose shader will
     // generate the necessary 3D texture coordinates for cube mapping
-  /*
-    Node* skyNode = scene_->CreateChild("Sky");
-    skyNode->SetScale(500.0f); // The scale actually does not matter
-    Skybox* skybox = skyNode->CreateComponent<Skybox>();
-    skybox->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
-    skybox->SetMaterial(cache->GetResource<Material>("Materials/Skybox.xml"));
-   */
+
+   
+    Node* skyNode2 = scene_->CreateChild("Sky");
+    skyNode2->SetScale(80.0f); // The scale actually does not matter
+    Skybox* skybox2 = skyNode2->CreateComponent<Skybox>();
+    skybox2->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+    skybox2->SetMaterial(cache->GetResource<Material>("Materials/Skybox.xml"));
+    
     
     
     Node* skyNode = scene_->CreateChild("ProcSkyNode");
@@ -164,41 +167,29 @@ void VehicleDemo::CreateScene()
     skyNode->SetRotation(Urho3D::Quaternion(1, 0, 0, 0));
     skyNode->SetScale(Urho3D::Vector3(100.0, 100.0, 100.0));
     
+    
     ProcSky* procSky = skyNode->CreateComponent<ProcSky>();
     procSky->SetEnabled(true);
+    
+    Node* skyLightNode = skyNode->CreateChild("ProcSkyLight");
+    skyLightNode->SetEnabled(true);
+    skyLightNode->SetPosition(Urho3D::Vector3(0.0, 0.0, 0.0));
+    skyLightNode->SetRotation(Urho3D::Quaternion(0.707107, 0, -0.707107, 0));
+    skyLightNode->SetScale(Urho3D::Vector3(1, 1, 1));
+    Light* skyLight = skyLightNode->CreateComponent<Light>();
+    skyLight->SetLightType(LIGHT_DIRECTIONAL);
+    skyLight->SetColor(Urho3D::Color(0.753, 0.749, 0.678, 1));
+    skyLight->SetSpecularIntensity(0);
+    skyLight->SetOccludee(false);
+    skyLight->SetOccluder(false);
+    skyLight->SetCastShadows(true);
+    skyLight->SetShadowCascade(Urho3D::CascadeParameters(20, 50, 100, 500, 0.8f));
+    skyLight->SetShadowFocus(Urho3D::FocusParameters(true, true, true, 1.0f, 5.0f));
+    skyLight->SetShadowBias(Urho3D::BiasParameters(1e-005, 0.001));
 
     
-    /*
-    <node id="1">
-    <attribute name="Is Enabled" value="true" />
-    <attribute name="Name" value="ProcSky" />
-    <attribute name="Position" value="0 0 0" />
-    <attribute name="Rotation" value="1 0 0 0" />
-    <attribute name="Scale" value="100 100 100" />
-    <attribute name="Variables" />
-    <component type="ProcSky" id="1" />
-    <node id="2">
-    <attribute name="Is Enabled" value="true" />
-    <attribute name="Name" value="ProcSkyLight" />
-    <attribute name="Position" value="0 0 0" />
-    <attribute name="Rotation" value="0.707107 0 -0.707107 0" />
-    <attribute name="Scale" value="1 1 1" />
-    <attribute name="Variables" />
-    <component type="Light" id="2">
-    <attribute name="Light Type" value="Directional" />
-    <attribute name="Color" value="0.753 0.749 0.678 1" />
-    <attribute name="Specular Intensity" value="0" />
-    <attribute name="Can Be Occluded" value="false" />
-    <attribute name="Cast Shadows" value="true" />
-    <attribute name="CSM Splits" value="2 10 100 500" />
-    <attribute name="View Size Quantize" value="1" />
-    <attribute name="View Size Minimum" value="5" />
-    <attribute name="Depth Constant Bias" value="1e-005" />
-    <attribute name="Depth Slope Bias" value="0.001" />
-    </component>
-    </node>
-    </node>
-    */
+
+    
     
     
     if (skyNode) {
@@ -206,12 +197,12 @@ void VehicleDemo::CreateScene()
         if (procSky) {
             // Can set other parameters here; e.g., SetUpdateMode(), SetUpdateInterval(), SetRenderSize()
             procSky->Initialize();
-            SDL_Log("ProcSky Initialized.");
+            URHO3D_LOGINFO("ProcSky Initialized.");
         } else {
-            SDL_Log("ProcSky node missing ProcSky component.");
+            URHO3D_LOGERROR("ProcSky node missing ProcSky component.");
         }
     } else {
-        SDL_Log("ProcSky node not found in scene.");
+        URHO3D_LOGERROR("ProcSky node not found in scene.");
     }
     
     // Create 1000 mushrooms in the terrain. Always face outward along the terrain normal

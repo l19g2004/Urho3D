@@ -24,7 +24,7 @@
 */
 
 #define PROCSKY_UI
-//#define PROCSKY_TEXTURE_DUMPING
+#define PROCSKY_TEXTURE_DUMPING
 
 #pragma once
 #include <Urho3D/Scene/Component.h>
@@ -35,6 +35,7 @@
 #include <Urho3D/Container/Vector.h>
 #include <Urho3D/Math/Matrix3.h>
 #include <Urho3D/Math/Vector3.h>
+
 using namespace Urho3D;
 
 namespace Urho3D {

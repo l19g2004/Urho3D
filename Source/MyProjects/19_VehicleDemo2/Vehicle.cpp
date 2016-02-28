@@ -16,9 +16,6 @@
 
 #include "Vehicle.h"
 
-
-
-#include <SDL/SDL_log.h>
 #include <Bullet/BulletDynamics/Vehicle/btRaycastVehicle.h>
 #include <Bullet/BulletDynamics/Dynamics/btDynamicsWorld.h>
 
@@ -425,6 +422,6 @@ void Vehicle::PostUpdate(float )
         
     }
 
-    //SDL_Log( "Speed: %f \n", (m_vehicle->getCurrentSpeedKmHour()));
+    //URHO3D_LOGINFO( "Speed: %f \n", (m_vehicle->getCurrentSpeedKmHour()));
 }
 
