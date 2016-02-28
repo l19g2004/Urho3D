@@ -275,7 +275,7 @@ void Sample::HandleKeyDown(StringHash eventType, VariantMap& eventData)
         {
             int shadowMapSize = renderer->GetShadowMapSize();
             shadowMapSize *= 2;
-            if (shadowMapSize > 2048)
+            if (shadowMapSize > 4096)
                 shadowMapSize = 512;
             renderer->SetShadowMapSize(shadowMapSize);
         }
