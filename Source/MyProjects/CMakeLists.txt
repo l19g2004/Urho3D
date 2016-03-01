@@ -43,6 +43,6 @@ endmacro ()
 # Add 
 #add_sample_subdirectory (01_HelloWorld2)
 add_sample_subdirectory (19_VehicleDemo2)
-add_sample_subdirectory (24_Urho2DSprite)
-add_sample_subdirectory (14_SoundEffects)
+#add_sample_subdirectory (24_Urho2DSprite)
+#add_sample_subdirectory (14_SoundEffects)
 
