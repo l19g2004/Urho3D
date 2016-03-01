@@ -54,6 +54,8 @@ Vehicle::Vehicle(Context* context)
     m_vehicle = NULL;
     
     m_vpNodeWheel.Clear();
+    
+    vehicleGear = 0;
 }
 
 //=============================================================================
@@ -397,6 +399,16 @@ void Vehicle::FixedUpdate(float timeStep)
     
     
 }
+float Vehicle::getSpeed()
+{
+    return m_vehicle->getCurrentSpeedKmHour();
+}
+
+int Vehicle::getGear()
+{
+    return vehicleGear;
+}
+
 
 //=============================================================================
 // sync wheels for rendering

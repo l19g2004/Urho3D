@@ -53,6 +53,8 @@ public:
     /// Handle physics world update. Called by LogicComponent base class.
     virtual void FixedUpdate(float timeStep);
     virtual void PostUpdate(float timeStep);
+    float getSpeed();
+    int getGear();
     
     /// Movement controls.
     Controls controls_;
@@ -89,6 +91,8 @@ private:
     float   suspensionCompression;
     float   rollInfluence;
     float   suspensionRestLength;
+    
+    int vehicleGear;
     
 };
 
