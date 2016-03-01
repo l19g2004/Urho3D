@@ -134,6 +134,6 @@ void PS() {
   rayleighCollected = (rayleighCollected * eyeExtinction * pow(eyeDepth, cRayleighCollectionPower)) / float(stepCount);
   mieCollected = (mieCollected * eyeExtinction * pow(eyeDepth, cMieCollectionPower)) / float(stepCount);
 
-  vec3 color = vec3(spot*mieCollected + mieFactor*mieCollected + rayleighFactor*rayleighCollected);
+  vec3 color = vec3(spot*mieCollected + mieFactor*mieCollected + rayleighFactor*rayleighCollected) + vec3(0.1,0.2,0.3);
   gl_FragColor = vec4(color, 1.0);
 }
