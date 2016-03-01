@@ -1,4 +1,4 @@
-//
+
 // Copyright (c) 2008-2015 the Urho3D project.
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -61,7 +61,7 @@ URHO3D_DEFINE_APPLICATION_MAIN(VehicleDemo)
 
 
 VehicleDemo::VehicleDemo(Context* context) :
-Sample(context), drawDebug_(true)
+Sample(context), drawDebug_(false)
 {
     // Register factory and attributes for the Vehicle component so it can be created via CreateComponent, and loaded / saved
     Vehicle::RegisterObject(context);
@@ -103,7 +103,17 @@ void VehicleDemo::CreateScene()
     Camera* camera = cameraNode_->CreateComponent<Camera>();
     camera->SetFarClip(500.0f);
     GetSubsystem<Renderer>()->SetViewport(0, new Viewport(context_, scene_, camera));
+    //GetSubsystem<Renderer>()->SetHDRRendering(true);
+    RenderPath* effectRenderPath=GetSubsystem<Renderer>()->GetViewport(0)->GetRenderPath();
+    //effectRenderPath->Append(cache->GetResource<XMLFile>("PostProcess/AutoExposure.xml"));
+    effectRenderPath->Append(cache->GetResource<XMLFile>("PostProcess/Blur.xml"));
+    
+    effectRenderPath->SetShaderParameter("BlurRadius", Variant(0.002f) );
+    effectRenderPath->SetShaderParameter("BlurSigma", Variant(0.001f) );
+    effectRenderPath->SetEnabled("Blur", false);
+    
 
+    
     // Create static scene content. First create a zone for ambient lighting and fog control
     Node* zoneNode = scene_->CreateChild("Zone");
     Zone* zone = zoneNode->CreateComponent<Zone>();
@@ -151,13 +161,13 @@ void VehicleDemo::CreateScene()
     // illusion of the box planes being far away. Use just the ordinary Box model and a suitable material, whose shader will
     // generate the necessary 3D texture coordinates for cube mapping
 
-   
+/*
     Node* skyNode2 = scene_->CreateChild("Sky");
     skyNode2->SetScale(80.0f); // The scale actually does not matter
     Skybox* skybox2 = skyNode2->CreateComponent<Skybox>();
     skybox2->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
     skybox2->SetMaterial(cache->GetResource<Material>("Materials/Skybox.xml"));
-    
+   */
     
     
     Node* skyNode = scene_->CreateChild("ProcSkyNode");
@@ -272,16 +282,25 @@ void VehicleDemo::CreateInstructions()
     
     
     // insert speed
-    Text* speedText = ui->GetRoot()->CreateChild<Text>();
+    Text* speedText = ui->GetRoot()->CreateChild<Text>("UITextSpeed");
     speedText->SetText("x km/h");
     speedText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
     // The text has multiple rows. Center them in relation to each other
     speedText->SetTextAlignment(HA_CENTER);
-    
     // Position the text relative to the screen center
     speedText->SetHorizontalAlignment(HA_CENTER);
     speedText->SetVerticalAlignment(VA_CENTER);
     speedText->SetPosition(ui->GetRoot()->GetWidth()/8, ui->GetRoot()->GetHeight() / 8);
+    
+    Text* gearText = ui->GetRoot()->CreateChild<Text>("UITextGear");
+    gearText->SetText("x gear");
+    gearText->SetFont(cache->GetResource<Font>("Fonts/Anonymous Pro.ttf"), 15);
+    // The text has multiple rows. Center them in relation to each other
+    gearText->SetTextAlignment(HA_CENTER);
+    // Position the text relative to the screen center
+    gearText->SetHorizontalAlignment(HA_CENTER);
+    gearText->SetVerticalAlignment(VA_CENTER);
+    gearText->SetPosition(ui->GetRoot()->GetWidth()/8, ui->GetRoot()->GetHeight() / 6);
     
     
 }
@@ -371,6 +390,16 @@ void VehicleDemo::HandleUpdate(StringHash eventType, VariantMap& eventData)
         else
             vehicle_->controls_.Set(CTRL_FORWARD | CTRL_BACK | CTRL_LEFT | CTRL_RIGHT | CTRL_SPACE, false);
     }
+    
+
+    // set vehicle speed to UI
+    Text* speedText = (Text*)GetSubsystem<UI>()->GetRoot()->GetChild("UITextSpeed",true);
+    speedText->SetText(String((int)vehicle_->getSpeed()) + " km/h");
+    
+    // set vehicle gear to UI
+    Text* gearText = (Text*)GetSubsystem<UI>()->GetRoot()->GetChild("UITextGear",true);
+    gearText->SetText(String((int)vehicle_->getGear()) + " gear");
+    
 }
 
 void VehicleDemo::HandlePostUpdate(StringHash eventType, VariantMap& eventData)
