@@ -110,3 +110,11 @@ build/
 #blender temp files
 *.blend1
 
+=======
+# Xcode files
+*.xcodeproj/
+*.build
+build/
+
+#blender temp files
+*.blend1
