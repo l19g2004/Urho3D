@@ -105,7 +105,7 @@ void ProcSky::OnNodeSet(Node* node) {
 }
 
 bool ProcSky::Initialize() {
-  URHO3D_LOGINFO("ProcSky::Initialize()");
+  LOGDEBUG("ProcSky::Initialize()");
   ResourceCache* cache(GetSubsystem<ResourceCache>());
   Renderer* renderer(GetSubsystem<Renderer>());
   rPath_ = renderer->GetViewport(0)->GetRenderPath();
@@ -126,7 +126,7 @@ bool ProcSky::Initialize() {
       lightNode_ = children[0];
     }
     if (!lightNode_) {
-      URHO3D_LOGINFO("ProcSky::Initialize: Creating node 'ProcSkyLight' with directional light.");
+      LOGDEBUG("ProcSky::Initialize: Creating node 'ProcSkyLight' with directional light.");
       lightNode_ = node_->CreateChild("ProcSkyLight");
       Light* light(lightNode_->CreateComponent<Light>());
       light->SetLightType(LIGHT_DIRECTIONAL);
@@ -140,16 +140,11 @@ bool ProcSky::Initialize() {
   skybox_ = node_->CreateComponent<Skybox>();
   Model* model(cache->GetResource<Model>("Models/Box.mdl"));
   skybox_->SetModel(model);
-
   SharedPtr<Material> skyboxMat(new Material(context_));
   skyboxMat->SetTechnique(0, cache->GetResource<Technique>("Techniques/DiffSkybox.xml"));
   skyboxMat->SetCullMode(CULL_NONE);
   skybox_->SetMaterial(skyboxMat);
-
- // skybox_->SetMaterial(cache->GetResource<Material>("Materials/Stone.xml"));
   SetRenderSize(renderSize_);
-  
-    
 
   // Shove some of the shader parameters into a VariantMap.
   VariantMap atmoParams;
@@ -188,9 +183,9 @@ bool ProcSky::Initialize() {
   // Perform at least one render to avoid empty sky.
   Update();
 
-  SubscribeToEvent(E_UPDATE, URHO3D_HANDLER(ProcSky, HandleUpdate));
+  SubscribeToEvent(E_UPDATE, HANDLER(ProcSky, HandleUpdate));
 #if defined(PROCSKY_UI)
-  SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(ProcSky, HandleKeyDown));
+  SubscribeToEvent(E_KEYDOWN, HANDLER(ProcSky, HandleKeyDown));
   ToggleUI(); // Initially display UI.
 #endif
   return true;
@@ -280,7 +275,7 @@ bool ProcSky::SetRenderSize(unsigned size) {
     renderSize_ = size;
     return true;
   } else {
-    URHO3D_LOGINFO("ProcSky::SetSize (" + String(size) + ") ignored; requires size >= 1.");
+    LOGWARNING("ProcSky::SetSize (" + String(size) + ") ignored; requires size >= 1.");
   }
   return false;
 }
@@ -294,7 +289,7 @@ void ProcSky::SetRenderQueued(bool queued) {
   if (renderQueued_ == queued) return;
   // When using manual update, be notified after rendering.
   if (!updateAuto_)
-    SubscribeToEvent(E_POSTRENDERUPDATE, URHO3D_HANDLER(ProcSky, HandlePostRenderUpdate));
+    SubscribeToEvent(E_POSTRENDERUPDATE, HANDLER(ProcSky, HandlePostRenderUpdate));
   rPath_->SetEnabled("ProcSky", queued);
   renderQueued_ = queued;
 }
@@ -396,7 +391,7 @@ void ProcSky::CreateSlider(UIElement* parent, const String& label, float* target
   slider->SetVar(label, target);
   // Store value label for handler to use.
   slider->SetVar(label+"_value", valueText);
-  SubscribeToEvent(slider, E_SLIDERCHANGED, URHO3D_HANDLER(ProcSky, HandleSliderChanged));
+  SubscribeToEvent(slider, E_SLIDERCHANGED, HANDLER(ProcSky, HandleSliderChanged));
 }
 
 void ProcSky::HandleSliderChanged(StringHash eventType, VariantMap& eventData) {
@@ -416,13 +411,12 @@ void ProcSky::HandleSliderChanged(StringHash eventType, VariantMap& eventData) {
 void ProcSky::HandleKeyDown(StringHash eventType, VariantMap& eventData) {
   if (GetSubsystem<UI>()->GetFocusElement()) { return; }
   int key(eventData[KeyDown::P_KEY].GetInt());
-  //int qual(eventData[KeyDown::P_QUALIFIERS].GetInt());
+  int qual(eventData[KeyDown::P_QUALIFIERS].GetInt());
 
-    
   if (key == KEY_U) {
     updateAuto_ = !updateAuto_;
   }
-  else if (key == KEY_P) {
+  else if (key == KEY_SPACE) {
     ToggleUI();
   }
   else if (key == '-') {
@@ -467,14 +461,14 @@ void ProcSky::HandleKeyDown(StringHash eventType, VariantMap& eventData) {
 #if defined(PROCSKY_TEXTURE_DUMPING)
 
 void ProcSky::DumpTexCubeImages(TextureCube* texCube, const String& filePathPrefix) {
-  URHO3D_LOGINFO("Save TextureCube: " + filePathPrefix + "[0-5].png");
+  LOGINFO("Save TextureCube: " + filePathPrefix + "[0-5].png");
   for (unsigned j = 0; j < MAX_CUBEMAP_FACES; ++j) {
     Texture2D* faceTex(static_cast<Texture2D*>(texCube->GetRenderSurface((CubeMapFace)j)->GetParentTexture()));
     SharedPtr<Image> faceImage(new Image(context_));
     faceImage->SetSize(faceTex->GetWidth(), faceTex->GetHeight(), faceTex->GetComponents());
     String filePath(filePathPrefix + String(j) + ".png");
     if (!texCube->GetData((CubeMapFace)j, 0, faceImage->GetData())) {
-      URHO3D_LOGINFO("...failed GetData() for face " + filePath);
+      LOGERROR("...failed GetData() for face " + filePath);
     } else {
       faceImage->SavePNG(filePath);
     }
@@ -482,12 +476,12 @@ void ProcSky::DumpTexCubeImages(TextureCube* texCube, const String& filePathPref
 }
 
 void ProcSky::DumpTexture(Texture2D* texture, const String& filePath) {
-  URHO3D_LOGINFO("Save texture: " + filePath);
+  LOGINFO("Save texture: " + filePath);
   SharedPtr<Image> image(new Image(context_));
   image->SetSize(texture->GetWidth(), texture->GetHeight(), texture->GetComponents());
 
   if (!texture->GetData(0, image->GetData())) {
-    URHO3D_LOGERROR("...failed GetData().");
+    LOGERROR("...failed GetData().");
   } else {
     image->SavePNG(filePath);
   }
