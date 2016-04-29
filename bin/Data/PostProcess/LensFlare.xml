@@ -1,0 +1,26 @@
+<renderpath>
+    
+    <rendertarget name="lensflare" tag="LensFlare" sizedivisor="10 10" format="rgba" filter="true" />
+    <rendertarget name="viewportDownsampled" tag="LensFlare" sizedivisor="10 10" format="rgba" filter="true" />
+    
+    <!-- prior processing -->
+    <command type="quad" tag="LensFlare" vs="LensFlare" ps="LensFlare" psdefines="PRIOR"  output="viewportDownsampled">
+        <texture unit="0" name="viewport" />
+    </command>
+    
+    <!-- lensflare effect -->
+    <command type="quad" tag="LensFlare" vs="LensFlare" ps="LensFlare" psdefines="LENSFLARE"  output="lensflare">
+        <texture unit="0" name="viewportDownsampled" />
+        <texture unit="1" name="Textures/lenscolor.png" />
+    </command>
+    
+    <!-- combine effect and viewport -->    
+    <command type="quad" tag="LensFlare" vs="LensFlare" ps="LensFlare" psdefines="COMBINE"  output="viewport">
+        <parameter name="MixRatio" value="0.5" />
+        <texture unit="0" name="viewport" />
+        <texture unit="1" name="lensflare" />
+    </command>
+
+
+
+</renderpath>
