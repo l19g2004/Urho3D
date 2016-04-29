@@ -19,6 +19,10 @@
 #include <Bullet/BulletDynamics/Vehicle/btRaycastVehicle.h>
 #include <Bullet/BulletDynamics/Dynamics/btDynamicsWorld.h>
 
+#include <Urho3D/Resource/XMLFile.h>
+
+#include "Urho3D/IO/Log.h"
+
 //=============================================================================
 //=============================================================================
 #define CUBE_HALF_EXTENTS   1
@@ -114,7 +118,11 @@ void Vehicle::Init()
     m_vehicle = new btRaycastVehicle( m_tuning, hullBody_->GetBody(), m_vehicleRayCaster );
     pbtDynWorld->addVehicle( m_vehicle );
     
+    
+
+    
     m_vehicle->setCoordinateSystem( rightIndex, upIndex, forwardIndex );
+    
     
     //Vector3 v3BoxExtents = Vector3::ONE;//Vector3(1.5f, 1.0f, 3.0f);
     hullObject->SetModel(cache->GetResource<Model>("MyProjects/MiniCooper/test/Chassis_001.mdl"));
@@ -131,10 +139,25 @@ void Vehicle::Init()
     //hullColShape->SetPosition((hullObject->GetBoundingBox()).Center() - Vector3(0.0f, 0.0f, 0.0f) );
     //hullColShape->SetPosition( Vector3(0.0f, +0.2f, 0.0f) );
     
+    
+    
+    
    
     
     hullObject->SetCastShadows(true);
 
+    
+    Node* patricleTest = node_->CreateChild("patricleTest");
+    patricleTest->LoadXML(cache->GetResource<XMLFile>("MyProjects/MiniCooper/particleTest.xml")->GetRoot());
+    patricleTest->SetPosition(Vector3(0.0f, 0.2f, -2.0f));
+
+    Node* lightTest = node_->CreateChild("lightTest");
+    lightTest->LoadXML(cache->GetResource<XMLFile>("MyProjects/MiniCooper/lightTest.xml")->GetRoot());
+    lightTest->SetPosition(Vector3(0.0f, 0.2f, 2.0f));
+    
+
+    
+    
     
 
     
@@ -210,8 +233,10 @@ void Vehicle::Init()
 
 
 
+    
 
-
+    
+    
     isFrontWheel = false;
 
 
@@ -266,7 +291,7 @@ void Vehicle::Init()
 
 
     
-    
+  /*
     for ( int i = 0; i < m_vehicle->getNumWheels(); i++ )
     {
         btWheelInfo& wheel = m_vehicle->getWheelInfo( i );
@@ -275,7 +300,11 @@ void Vehicle::Init()
         wheel.m_wheelsDampingCompression = suspensionCompression;
         wheel.m_frictionSlip = wheelFriction;
         wheel.m_rollInfluence = rollInfluence;
+
+        
+        
     }
+    */
     
     if ( m_vehicle )
     {
@@ -339,9 +368,14 @@ void Vehicle::FixedUpdate(float timeStep)
     //SDL_Log( "gVehicleSteering: %f\n", gVehicleSteering);
     //SDL_Log( "controls_.buttons_: %d\n", controls_.buttons_);
     
+    
+    btRigidBody* vehicle_body = m_vehicle->getRigidBody();
+    
+    
+    
     // set the RigidBody active if its sleeping
-    if((m_vehicle->getRigidBody())->getActivationState() > 1)
-        (m_vehicle->getRigidBody())->setActivationState(ACTIVE_TAG);
+    if(vehicle_body->getActivationState() > 1)
+        vehicle_body->setActivationState(ACTIVE_TAG);
     
     
     // Read controls
@@ -368,11 +402,12 @@ void Vehicle::FixedUpdate(float timeStep)
     }
     
     if(controls_.buttons_ & CTRL_SPACE){
-     //   gBreakingForce = maxBreakingForce;
-        wheelFriction = 10;
+        
+        gBreakingForce = 20.0f;
+        //wheelFriction = 10;
     } else {
-      //  gBreakingForce = 0.0f;
-        wheelFriction = 1000;
+        gBreakingForce = 0.0f;
+        //wheelFriction = 10;
     }
 
     
@@ -382,7 +417,21 @@ void Vehicle::FixedUpdate(float timeStep)
     {
         btWheelInfo& wheel = m_vehicle->getWheelInfo( i );
         wheel.m_frictionSlip = wheelFriction;
+        
+        
+        
+        wheel.m_suspensionStiffness      = btScalar(50.0); // 5.88
+       //   wheel.m_suspensionCompression    = btScalar(5.); // 0.83
+      //    wheel.m_suspensionDamping        = btScalar(0.88); // 0.88
+        wheel.m_maxSuspensionTravelCm    = btScalar(500.); // 500.
+        wheel.m_frictionSlip             = btScalar(0.8); // 10.5
+        wheel.m_maxSuspensionForce       = btScalar(6000.); // 6000.
+        wheel.m_suspensionRelativeVelocity = 10.0;
+        
+        
     }
+    
+ 
     
     
     /*
@@ -396,6 +445,8 @@ void Vehicle::FixedUpdate(float timeStep)
      steering_ = steering_ * 0.95f + newSteering * 0.05f;
      }
      */
+    
+    m_vehicle->updateSuspension(timeStep);
     
     int wheelIndex = 2;
     m_vehicle->applyEngineForce(gEngineForce,wheelIndex);
@@ -440,12 +491,41 @@ void Vehicle::PostUpdate(float )
         pWheel->SetPosition( v3Origin );
 
         btWheelInfo whInfo = m_vehicle->getWheelInfo( i );
+        
+        // tarting point of the ray, where the suspension connects to the chassis
         Vector3 v3PosLS = ToVector3( whInfo.m_chassisConnectionPointCS );
         Quaternion qRotator = ( v3PosLS.x_ >= 0.0 ? Quaternion(0.0f, 0.0f, -90.0f) : Quaternion(0.0f, 0.0f, 90.0f) );
         pWheel->SetRotation( qRot * qRotator );
         
+   
+        
+   /*
+        const btRigidBody* const chassis = m_vehicle->getRigidBody();
+        
+        // Calculate velocity of wheel wrt ground
+        btVector3 rel_pos1 = whInfo.m_raycastInfo.m_contactPointWS -
+        chassis->getCenterOfMassPosition();
+        btVector3 vel = chassis->getVelocityInLocalPoint(rel_pos1);
+        // Calculate velocity in x & y
+        //btScalar vz = -m_vehicle->getForward(i).dot(vel);
+        btScalar vz = -whInfo.m_wheelDirectionCS.dot(vel);
+        //btScalar vx = m_vehicle->getAxle(i).dot(vel);
+        btScalar vx = whInfo.m_wheelAxleCS.dot(vel);
+        // Calculate slip angle of wheel.
+        btScalar slip_angle = btAtan2(vx, btFabs(vz));
+       */
+      
+        //URHO3D_LOGINFOF("slip_angle  %d: %f \n", i, slip_angle);
+        
+    //    if(whInfo.m_skidInfo < 1.0)
+    //        URHO3D_LOGINFOF("whInfo.m_skidInfo %f \n", whInfo.m_skidInfo);
+      
+        
     }
+    
+    
+    
 
-    //URHO3D_LOGINFO( "Speed: %f \n", (m_vehicle->getCurrentSpeedKmHour()));
+    //URHO3D_LOGINFOF( "Speed: %f \n", (m_vehicle->getCurrentSpeedKmHour()));
 }
 

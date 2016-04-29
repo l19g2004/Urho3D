@@ -21,7 +21,7 @@
 #
 
 # Set project name
-project (Urho3D-Samples)
+project (Urho3D-MyProjects)
 
 # Find Urho3D library
 find_package (Urho3D REQUIRED)
@@ -45,4 +45,5 @@ endmacro ()
 add_sample_subdirectory (19_VehicleDemo2)
 #add_sample_subdirectory (24_Urho2DSprite)
 #add_sample_subdirectory (14_SoundEffects)
+add_sample_subdirectory (RacingGame)
 
