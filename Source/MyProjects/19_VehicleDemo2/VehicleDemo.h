@@ -22,7 +22,7 @@
 
 #pragma once
 
-#include "Sample.h"
+#include "../../Samples/Sample.h"
 
 namespace Urho3D
 {

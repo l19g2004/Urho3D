@@ -161,9 +161,9 @@ void RacingGame::CreateScene()
 
     effectRenderPath->Append(cache->GetResource<XMLFile>("PostProcess/LensFlare.xml"));
     effectRenderPath->SetShaderParameter("LensFlareScale", Variant(0.05f) );
-    effectRenderPath->SetShaderParameter("LensFlareBias", Variant(-1.0f) );
-    effectRenderPath->SetEnabled("LensFlare", true);
-    GetSubsystem<Renderer>()->GetViewport(0)->SetRenderPath(effectRenderPath);
+ //   effectRenderPath->SetShaderParameter("LensFlareBias", Variant(-1.0f) );
+ //   effectRenderPath->SetEnabled("LensFlare", true);
+ //   GetSubsystem<Renderer>()->GetViewport(0)->SetRenderPath(effectRenderPath);
     
    /*
     effectRenderPath->Append(cache->GetResource<XMLFile>("PostProcess/LensFlare.xml"));
